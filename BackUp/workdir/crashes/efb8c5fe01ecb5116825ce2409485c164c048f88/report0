@@ -1,0 +1,20 @@
+BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 40s!
+Showing busy workqueues and worker pools:
+workqueue events: flags=0x0
+  pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256 refcnt=3
+    pending: e1000_watchdog, vmstat_shepherd
+workqueue events_power_efficient: flags=0x80
+  pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=4/256 refcnt=5
+    pending: gc_worker, neigh_periodic_work, neigh_periodic_work, do_cache_clean
+workqueue events_freezable_power_: flags=0x84
+  pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256 refcnt=2
+    pending: disk_events_workfn
+workqueue mm_percpu_wq: flags=0x8
+  pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256 refcnt=2
+    pending: vmstat_update
+workqueue writeback: flags=0x4a
+  pwq 4: cpus=0-1 flags=0x4 nice=0 active=1/256 refcnt=3
+    pending: wb_workfn
+workqueue kblockd: flags=0x18
+  pwq 1: cpus=0 node=0 flags=0x0 nice=-20 active=1/256 refcnt=2
+    pending: blk_mq_timeout_work

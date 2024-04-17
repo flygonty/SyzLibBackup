@@ -1,0 +1,21 @@
+watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [syz-executor.0:6931]
+Modules linked in:
+irq event stamp: 54037
+hardirqs last  enabled at (54036): [<ffffffffa9200c42>] asm_sysvec_apic_timer_interrupt+0x12/0x20
+hardirqs last disabled at (54037): [<ffffffffa90644fb>] sysvec_apic_timer_interrupt+0xb/0xa0
+softirqs last  enabled at (0): [<ffffffffa653274b>] copy_process+0x160b/0x65a0
+softirqs last disabled at (193): [<ffffffffa9200f8f>] asm_call_irq_on_stack+0xf/0x20
+CPU: 0 PID: 6931 Comm: syz-executor.0 Not tainted 5.10.1 #4
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+RIP: 0010:unwind_next_frame+0x21b/0x1eb0
+Code: 38 f1 aa 49 89 f8 49 c1 e8 03 45 0f b6 04 00 48 89 f8 83 e0 07 83 c0 03 44 38 c0 7c 09 45 84 c0 0f 85 18 15 00 00 44 8d 46 01 <44> 8b 14 95 40 38 f1 aa 48 ba 00 00 00 00 00 fc ff df 4a 8d 3c 85
+RSP: 0018:ffff88806ce099a0 EFLAGS: 00010246
+RAX: 0000000000000003 RBX: ffff88806ce09ac8 RCX: ffffffffa65048a7
+RDX: 0000000000001048 RSI: 0000000000001048 RDI: ffffffffaaf17960
+RBP: 1ffff1100d9c133c R08: 0000000000001049 R09: ffff88806ce09ac8
+R10: ffff88806ce09b27 R11: 0000000000030040 R12: ffff88806ce09afd
+R13: ffff88806ce09b18 R14: ffff88806ce09b10 R15: 0000000000000002
+FS:  00007fb60a928700(0000) GS:ffff88806ce00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055cbb3c8c188 CR3: 0000000002648002 CR4: 0000000000370ef0
+Call Trace:

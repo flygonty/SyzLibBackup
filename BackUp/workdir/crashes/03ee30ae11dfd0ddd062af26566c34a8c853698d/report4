@@ -1,0 +1,97 @@
+netlink: 1 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65529 bytes leftover after parsing attributes in process `syz-executor.0'.
+------------[ cut here ]------------
+NETDEV WATCHDOG: eth0 (e1000): transmit queue 0 timed out
+WARNING: CPU: 0 PID: 0 at net/sched/sch_generic.c:442 dev_watchdog+0xa1e/0xba0
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.10.1 #4
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+RIP: 0010:dev_watchdog+0xa1e/0xba0
+Code: ff ff e8 d5 ac 29 fe 4c 89 e7 c6 05 eb d8 2c 02 01 e8 a6 55 f1 ff 89 e9 4c 89 e6 48 c7 c7 20 d5 2a a9 48 89 c2 e8 0b f0 a3 00 <0f> 0b e9 a5 fd ff ff 48 8b 7c 24 20 e8 71 c3 54 fe e9 8b f7 ff ff
+RSP: 0018:ffff88806ce09cd8 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffed100d9c138d
+RBP: 0000000000000000 R08: 0000000000000001 R09: fffffbfff54098f9
+R10: ffffffffaa04c7c7 R11: fffffbfff54098f8 R12: ffff888004b48000
+R13: dffffc0000000000 R14: ffff88800724dc00 R15: ffff888004b484c0
+FS:  0000000000000000(0000) GS:ffff88806ce00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffea2fbd080 CR3: 000000000fd4e006 CR4: 0000000000370ef0
+Call Trace:
+ <IRQ>
+ call_timer_fn+0x182/0x580
+ run_timer_softirq+0xde5/0x14e0
+ __do_softirq+0x1b8/0x7ca
+ asm_call_irq_on_stack+0xf/0x20
+ </IRQ>
+ do_softirq_own_stack+0x80/0xa0
+ irq_exit_rcu+0x125/0x150
+ sysvec_apic_timer_interrupt+0x43/0xa0
+ asm_sysvec_apic_timer_interrupt+0x12/0x20
+RIP: 0010:default_idle+0xe/0x10
+Code: ff ff 4c 89 e2 48 89 ef 31 f6 5d 41 5c e9 1a ad 57 fe cc cc cc cc cc cc cc cc cc cc e9 07 00 00 00 0f 00 2d a4 69 5a 00 fb f4 <c3> 90 41 54 be 08 00 00 00 53 65 48 8b 1c 25 40 ef 01 00 48 89 df
+RSP: 0018:ffffffffa9807e30 EFLAGS: 00000202
+RAX: ffffffffa887d270 RBX: 0000000000000000 RCX: ffffffffa8865188
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffffa887da64
+RBP: fffffbfff5306450 R08: 0000000000000001 R09: ffffed100d9c67ee
+R10: ffff88806ce33f6b R11: ffffed100d9c67ed R12: 0000000000000000
+R13: ffffffffaa04e008 R14: 0000000000000000 R15: 0000000000000000
+ default_idle_call+0xbb/0x3b0
+ do_idle+0x3cc/0x550
+ cpu_startup_entry+0x14/0x20
+ start_kernel+0x481/0x4a2
+ secondary_startup_64_no_verify+0xc2/0xcb
+irq event stamp: 7430644
+hardirqs last  enabled at (7430654): [<ffffffffa8a00d82>] asm_sysvec_irq_work+0x12/0x20
+hardirqs last disabled at (7430663): [<ffffffffa88631bb>] sysvec_irq_work+0xb/0xa0
+softirqs last  enabled at (7430064): [<ffffffffa5d526ec>] irq_enter_rcu+0xbc/0xd0
+softirqs last disabled at (7430065): [<ffffffffa8a00f8f>] asm_call_irq_on_stack+0xf/0x20
+---[ end trace 66146731a5419fde ]---
+e1000 0000:00:04.0 eth0: Reset adapter
+netlink: 65525 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65517 bytes leftover after parsing attributes in process `syz-executor.0'.
+e1000: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+netlink: 65517 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65517 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 62965 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65525 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65525 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65521 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65525 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 'syz-executor.0': attribute type 2 has an invalid length.
+netlink: 9893 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 'syz-executor.0': attribute type 21 has an invalid length.
+netlink: 'syz-executor.0': attribute type 10 has an invalid length.
+netlink: 'syz-executor.0': attribute type 12 has an invalid length.
+__nla_validate_parse: 7 callbacks suppressed
+netlink: 65521 bytes leftover after parsing attributes in process `syz-executor.0'.
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	ff 4c 89 e2          	decl   -0x1e(%rcx,%rcx,4)
+   4:	48 89 ef             	mov    %rbp,%rdi
+   7:	31 f6                	xor    %esi,%esi
+   9:	5d                   	pop    %rbp
+   a:	41 5c                	pop    %r12
+   c:	e9 1a ad 57 fe       	jmpq   0xfe57ad2b
+  11:	cc                   	int3
+  12:	cc                   	int3
+  13:	cc                   	int3
+  14:	cc                   	int3
+  15:	cc                   	int3
+  16:	cc                   	int3
+  17:	cc                   	int3
+  18:	cc                   	int3
+  19:	cc                   	int3
+  1a:	cc                   	int3
+  1b:	e9 07 00 00 00       	jmpq   0x27
+  20:	0f 00 2d a4 69 5a 00 	verw   0x5a69a4(%rip)        # 0x5a69cb
+  27:	fb                   	sti
+  28:	f4                   	hlt
+* 29:	c3                   	retq <-- trapping instruction
+  2a:	90                   	nop
+  2b:	41 54                	push   %r12
+  2d:	be 08 00 00 00       	mov    $0x8,%esi
+  32:	53                   	push   %rbx
+  33:	65 48 8b 1c 25 40 ef 	mov    %gs:0x1ef40,%rbx
+  3a:	01 00
+  3c:	48 89 df             	mov    %rbx,%rdi

@@ -1,0 +1,48 @@
+watchdog: BUG: soft lockup - CPU#1 stuck for 23s! [syz-executor:22022]
+Modules linked in:
+irq event stamp: 4495228
+hardirqs last  enabled at (4495227): [<ffffffff90a7e4d4>] _raw_spin_unlock_irqrestore+0x34/0x40
+hardirqs last disabled at (4495228): [<ffffffff90a644fb>] sysvec_apic_timer_interrupt+0xb/0xa0
+softirqs last  enabled at (4494046): [<ffffffff90e0051e>] __do_softirq+0x51e/0x7ca
+softirqs last disabled at (4494041): [<ffffffff90c00f8f>] asm_call_irq_on_stack+0xf/0x20
+CPU: 1 PID: 22022 Comm: syz-executor Not tainted 5.10.1 #4
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+RIP: 0010:_raw_spin_unlock_irqrestore+0x25/0x40
+Code: 80 00 00 00 00 55 48 89 fd 48 83 c7 18 53 48 89 f3 48 8b 74 24 10 e8 ca 9b 5e fd 48 89 ef e8 62 56 5f fd f6 c7 02 75 0c 53 9d <65> ff 0d 34 0a 5a 6f 5b 5d c3 e8 ec c7 7d fd eb ed 66 2e 0f 1f 84
+RSP: 0018:ffff888026907c00 EFLAGS: 00000246
+RAX: 000000000044977b RBX: 0000000000000246 RCX: 1ffffffff2664ee2
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff90a7e4d4
+RBP: ffff888003b8e360 R08: 0000000000000001 R09: fffffbfff26610c7
+R10: ffffffff93308637 R11: 0000000000000001 R12: ffff888003b8e360
+R13: 0000000000000246 R14: ffffed1000771c74 R15: ffff888003eb10e0
+FS:  0000555555b9c980(0000) GS:ffff888066700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fff4a535080 CR3: 000000002a110002 CR4: 0000000000370ee0
+Call Trace:
+ scan_gray_list+0x266/0x440
+ kmemleak_scan+0x82d/0x1170
+ kmemleak_write+0x55c/0x660
+ full_proxy_write+0x11d/0x190
+ vfs_write+0x29a/0xa20
+ ksys_write+0x12d/0x250
+ do_syscall_64+0x33/0x40
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7f85544c9be7
+Code: eb b2 90 b8 6e 00 00 00 eb aa e8 f4 55 05 00 0f 1f 40 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
+RSP: 002b:00007fff4a4b9218 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fff4a4b9918 RCX: 00007f85544c9be7
+RDX: 0000000000000004 RSI: 00007f8554584a46 RDI: 0000000000000003
+RBP: 0000000000000003 R08: 00000000004d8ae8 R09: 0000000000000d4c
+R10: 00007fff4a4b91e0 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000033d13a R14: 0000000000000003 R15: 0000000000000000
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0 skipped: idling at default_idle+0xe/0x10
+netlink: 'syz-executor.0': attribute type 7 has an invalid length.
+netlink: 62965 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 'syz-executor.0': attribute type 1 has an invalid length.
+netlink: 62965 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65269 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65269 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 'syz-executor.0': attribute type 6 has an invalid length.
+netlink: 65269 bytes leftover after parsing attributes in process `syz-executor.0'.
+SELinux: unrecognized netlink message: protocol=0 nlmsg_type=54 sclass=netlink_route_socket pid=22077 comm=syz-executor.0

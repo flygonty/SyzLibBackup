@@ -1,0 +1,13 @@
+r0 = syz_mnl_nlmsg_batch_start()
+r1 = syz_mnl_nlmsg_batch_current(r0)
+r2 = 0
+syz_nftnl_batch_begin(r1, r2)
+syz_mnl_batch_next(r0)
+r3 = syz_nftnl_table_alloc()
+syz_nftnl_table_set_str(r3, NFTNL_TABLE_FAMILY, NFPROTO_INET)
+syz_nftnl_table_set_u32(r3, NFTNL_TABLE_NAME, "table_name")
+r4 = syz_mnl_nlmsg_batch_current(r0)
+r5 = syz_nftnl_table_nlmsg_build_hdr(r4, NFT_MSG_NEWTABLE, NFPROTO_INET, NLM_F_CREATE | NLM_F_ACK, r2)
+syz_nftnl_table_nlmsg_build_payload(r5, r3)
+syz_mnl_nlmsg_batch_next(r4)
+syz_nftnl_table_free(r3)

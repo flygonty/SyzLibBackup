@@ -1,0 +1,86 @@
+2024/04/08 14:29:36 poll: candidates=0 inputs=0 signal=0
+2024/04/08 14:29:39 poll: candidates=0 inputs=0 signal=0
+BUG: memory leak
+unreferenced object 0xffff88800e6b91a0 (size 312):
+  comm "systemd", pid 1, jiffies 4294685666 (age 1197.046s)
+  hex dump (first 32 bytes):
+    44 80 00 00 80 88 ff ff 06 00 00 00 08 00 80 86  D...............
+    20 07 25 8f ff ff ff ff 00 00 00 00 00 00 00 00   .%.............
+  backtrace:
+    [<000000005715e649>] __d_alloc+0x2a/0x990
+    [<000000002fe333a2>] d_alloc+0x46/0x1f0
+    [<00000000f3b1d981>] d_alloc_parallel+0xe9/0x1940
+    [<00000000bc6fd4b7>] __lookup_slow+0x193/0x4a0
+    [<000000007838455a>] walk_component+0x41a/0x6a0
+    [<00000000cfb233a0>] path_lookupat.isra.0+0x180/0x530
+    [<00000000f4a717fd>] filename_lookup+0x1a3/0x3e0
+    [<0000000076d12d29>] inotify_find_inode+0x2e/0x110
+    [<00000000c824db15>] __x64_sys_inotify_add_watch+0x1f1/0x350
+    [<00000000d5d04cd4>] do_syscall_64+0x33/0x40
+    [<00000000e137fc2b>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: memory leak
+unreferenced object 0xffff8880174ccd08 (size 984):
+  comm "systemd", pid 1, jiffies 4294685666 (age 1197.046s)
+  hex dump (first 32 bytes):
+    24 81 0c 00 00 00 00 00 00 00 00 00 00 00 00 00  $...............
+    ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff  ................
+  backtrace:
+    [<0000000020c0ee8e>] alloc_inode+0x169/0x1e0
+    [<000000001f0569ea>] iget_locked+0x1aa/0x4b0
+    [<00000000b1d3bf0b>] kernfs_get_inode+0x49/0x540
+    [<000000008e99c71e>] kernfs_iop_lookup+0x1a1/0x230
+    [<000000008579293d>] __lookup_slow+0x25b/0x4a0
+    [<000000007838455a>] walk_component+0x41a/0x6a0
+    [<00000000cfb233a0>] path_lookupat.isra.0+0x180/0x530
+    [<00000000f4a717fd>] filename_lookup+0x1a3/0x3e0
+    [<0000000076d12d29>] inotify_find_inode+0x2e/0x110
+    [<00000000c824db15>] __x64_sys_inotify_add_watch+0x1f1/0x350
+    [<00000000d5d04cd4>] do_syscall_64+0x33/0x40
+    [<00000000e137fc2b>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: memory leak
+unreferenced object 0xffff888008e1f8a0 (size 120):
+  comm "systemd", pid 1, jiffies 4294685666 (age 1197.046s)
+  hex dump (first 32 bytes):
+    e0 ce 4c 17 80 88 ff ff 20 4c 12 8a ff ff ff ff  ..L..... L......
+    08 cd 4c 17 80 88 ff ff b8 f8 e1 08 80 88 ff ff  ..L.............
+  backtrace:
+    [<00000000e25718a2>] security_inode_alloc+0x34/0x160
+    [<00000000b6a249ce>] inode_init_always+0x52e/0xce0
+    [<000000002fa86870>] alloc_inode+0x84/0x1e0
+    [<000000001f0569ea>] iget_locked+0x1aa/0x4b0
+    [<00000000b1d3bf0b>] kernfs_get_inode+0x49/0x540
+    [<000000008e99c71e>] kernfs_iop_lookup+0x1a1/0x230
+    [<000000008579293d>] __lookup_slow+0x25b/0x4a0
+    [<000000007838455a>] walk_component+0x41a/0x6a0
+    [<00000000cfb233a0>] path_lookupat.isra.0+0x180/0x530
+    [<00000000f4a717fd>] filename_lookup+0x1a3/0x3e0
+    [<0000000076d12d29>] inotify_find_inode+0x2e/0x110
+    [<00000000c824db15>] __x64_sys_inotify_add_watch+0x1f1/0x350
+    [<00000000d5d04cd4>] do_syscall_64+0x33/0x40
+    [<00000000e137fc2b>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: memory leak
+unreferenced object 0xffff88800e6b9490 (size 312):
+  comm "systemd", pid 1, jiffies 4294685666 (age 1197.046s)
+  hex dump (first 32 bytes):
+    44 80 00 00 80 88 ff ff 06 00 00 00 08 00 80 86  D...............
+    20 07 25 8f ff ff ff ff 00 00 00 00 00 00 00 00   .%.............
+  backtrace:
+    [<000000005715e649>] __d_alloc+0x2a/0x990
+    [<000000002fe333a2>] d_alloc+0x46/0x1f0
+    [<00000000f3b1d981>] d_alloc_parallel+0xe9/0x1940
+    [<00000000bc6fd4b7>] __lookup_slow+0x193/0x4a0
+    [<000000007838455a>] walk_component+0x41a/0x6a0
+    [<00000000cfb233a0>] path_lookupat.isra.0+0x180/0x530
+    [<00000000f4a717fd>] filename_lookup+0x1a3/0x3e0
+    [<0000000076d12d29>] inotify_find_inode+0x2e/0x110
+    [<00000000c824db15>] __x64_sys_inotify_add_watch+0x1f1/0x350
+    [<00000000d5d04cd4>] do_syscall_64+0x33/0x40
+    [<00000000e137fc2b>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: leak checking failed
+2024/04/08 14:29:42 poll: candidates=0 inputs=0 signal=0
+2024/04/08 14:29:45 poll: candidates=0 inputs=0 signal=0
+2024/04/08 14:29:48 poll: candidates=0 inputs=0 signal=0

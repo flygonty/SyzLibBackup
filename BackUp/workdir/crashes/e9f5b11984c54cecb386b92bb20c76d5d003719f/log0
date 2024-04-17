@@ -1,0 +1,120 @@
+syzkaller login: [   72.242018] sshd (203) used greatest stack depth: 24320 bytes left
+OpenSSH_8.2p1 Ubuntu-4ubuntu0.11, OpenSSL 1.1.1f  31 Mar 2020
+debug1: Reading configuration data /dev/null
+debug1: Connecting to localhost [127.0.0.1] port 27074.
+debug1: fd 3 clearing O_NONBLOCK
+debug1: Connection established.
+debug1: identity file /home/syz/Desktop/image/bullseye.id_rsa type 0
+debug1: identity file /home/syz/Desktop/image/bullseye.id_rsa-cert type -1
+debug1: Local version string SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.11
+debug1: Remote protocol version 2.0, remote software version OpenSSH_8.4p1 Debian-5+deb11u3
+debug1: match: OpenSSH_8.4p1 Debian-5+deb11u3 pat OpenSSH* compat 0x04000000
+debug1: Authenticating to localhost:27074 as 'root'
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: algorithm: curve25519-sha256
+debug1: kex: host key algorithm: ecdsa-sha2-nistp256
+debug1: kex: server->client cipher: chacha20-poly1305@openssh.com MAC: <implicit> compression: none
+debug1: kex: client->server cipher: chacha20-poly1305@openssh.com MAC: <implicit> compression: none
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: Server host key: ecdsa-sha2-nistp256 SHA256:Xr/yTHUZR1HfIz3q2G8KGghXYfYV0vmOjiC1PEJ2TBg
+debug1: checking without port identifier
+Warning: Permanently added '[localhost]:27074' (ECDSA) to the list of known hosts.
+debug1: resetting send seqnr 3
+debug1: rekey out after 134217728 blocks
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: resetting read seqnr 3
+debug1: SSH2_MSG_NEWKEYS received
+debug1: rekey in after 134217728 blocks
+debug1: Will attempt key: /home/syz/Desktop/image/bullseye.id_rsa RSA SHA256:dmdEoFjPJ57rhhuvxIxr6PXyHswmnQWXAou6qDkiuDA explicit
+debug1: SSH2_MSG_EXT_INFO received
+debug1: kex_input_ext_info: server-sig-algs=<ssh-ed25519,sk-ssh-ed25519@openssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com,webauthn-sk-ecdsa-sha2-nistp256@openssh.com>
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+debug1: Authentications that can continue: publickey,password
+debug1: Next authentication method: publickey
+debug1: Offering public key: /home/syz/Desktop/image/bullseye.id_rsa RSA SHA256:dmdEoFjPJ57rhhuvxIxr6PXyHswmnQWXAou6qDkiuDA explicit
+debug1: Server accepts key: /home/syz/Desktop/image/bullseye.id_rsa RSA SHA256:dmdEoFjPJ57rhhuvxIxr6PXyHswmnQWXAou6qDkiuDA explicit
+debug1: Authentication succeeded (publickey).
+Authenticated to localhost ([127.0.0.1]:27074).
+debug1: Remote connections from LOCALHOST:33985 forwarded to local address 127.0.0.1:33985
+debug1: channel 0: new [client-session]
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug1: pledge: network
+debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_reply 0
+debug1: Remote: /root/.ssh/authorized_keys:1: key options: agent-forwarding port-forwarding pty user-rc x11-forwarding
+debug1: Remote: /root/.ssh/authorized_keys:1: key options: agent-forwarding port-forwarding pty user-rc x11-forwarding
+debug1: remote forward success for: listen 33985, connect 127.0.0.1:33985
+debug1: All remote forwarding requests processed
+debug1: Sending command: cd / && /syz-fuzzer -executor=/syz-executor -name=vm-0 -arch=amd64 -manager=localhost:33985 -sandbox=none -procs=1 -cover=true -debug=true -test=false -vv=100 -optional=slowdown=1:raw_cover=false:sandbox_arg=0:pprof_port=6060:reset_acc_state=false
+2024/04/02 05:15:04 fuzzer started
+
+VM DIAGNOSIS:
+22:20:06  Registers:
+info registers vcpu 0
+RAX=ffff88806d000000 RBX=0000000000000000 RCX=ffffffffa0d3baa4 RDX=0000000000000001
+RSI=0000000000000004 RDI=00000000000b7adc RBP=dffffc0000000000 RSP=ffffffffa1c07e18
+R8 =ffffffffa1c14480 R9 =ffffed100da06a99 R10=ffffed100da06a98 R11=ffff88806d0354c3
+R12=ffffffffa24790d0 R13=1ffffffff4380fc8 R14=0000000000000000 R15=0000000000000000
+RIP=ffffffffa0d3c8ae RFL=00000256 [---ZAP-] CPL=0 II=0 A20=1 SMM=0 HLT=0
+ES =0000 0000000000000000 ffffffff 00c00100
+CS =0010 0000000000000000 ffffffff 00a09b00 DPL=0 CS64 [-RA]
+SS =0000 0000000000000000 ffffffff 00c00000
+DS =0000 0000000000000000 ffffffff 00c00100
+FS =0000 0000000000000000 ffffffff 00c00100
+GS =0000 ffff88806d000000 ffffffff 00c00100
+LDT=0000 0000000000000000 ffffffff 00c00000
+TR =0040 fffffe08a1332000 00004087 00008b00 DPL=0 TSS64-busy
+GDT=     fffffe08a1330000 0000007f
+IDT=     fffffe0000000000 00000fff
+CR0=80050033 CR2=00007fff80367f00 CR3=000000000573e003 CR4=00370ef0
+DR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000 
+DR6=00000000ffff0ff0 DR7=0000000000000400
+EFER=0000000000000d01
+FCW=037f FSW=0000 [ST=0] FTW=00 MXCSR=00001f80
+FPR0=0000000000000000 0000 FPR1=0000000000000000 0000
+FPR2=0000000000000000 0000 FPR3=0000000000000000 0000
+FPR4=0000000000000000 0000 FPR5=0000000000000000 0000
+FPR6=0000000000000000 0000 FPR7=0000000000000000 0000
+XMM00=00000000000000000000000000000000 XMM01=ffffffffffffffffffffffffffffffff
+XMM02=000000000000000000007ffda8a86ef1 XMM03=000000000000000200007fd1ced6478b
+XMM04=00000000000000008000000000000006 XMM05=00000000000000000000000000000000
+XMM06=00000000000000000000000000000000 XMM07=00000000000000000000000000000000
+XMM08=00002000202020200000000000200000 XMM09=0000000000ffffff000000ffffff0000
+XMM10=00000000000000000000000000000000 XMM11=00000000000000000000002000614007
+XMM12=00000000000000000000000000000000 XMM13=00000000000000000000000000000000
+XMM14=00000000000000000000000000000000 XMM15=0000000000000000000000e40fe2c1fc
+info registers vcpu 1
+RAX=0000000000000000 RBX=00007ffda8a85c70 RCX=00007fd1cee209c6 RDX=00007ffda8a84b90
+RSI=00007ffda8a84b90 RDI=00007ffda8a84c70 RBP=00007ffda8a84c60 RSP=00007ffda8a84b48
+R8 =0000000000000001 R9 =00007ffda8a85c81 R10=000000000040105f R11=0000000000000246
+R12=00007ffda8a84c70 R13=00007ffda8a85c83 R14=00007ffda8a84c74 R15=00007ffda8a85c84
+RIP=00007fd1cee209ce RFL=00010207 [-----PC] CPL=3 II=0 A20=1 SMM=0 HLT=0
+ES =0000 0000000000000000 ffffffff 00c00100
+CS =0033 0000000000000000 ffffffff 00a0fb00 DPL=3 CS64 [-RA]
+SS =002b 0000000000000000 ffffffff 00c0f300 DPL=3 DS   [-WA]
+DS =0000 0000000000000000 ffffffff 00c00100
+FS =0000 00007fd1cef0b5c0 ffffffff 00c00100
+GS =0000 0000000000000000 ffffffff 00c00100
+LDT=0000 0000000000000000 00000000 00000000
+TR =0040 fffffe4d68200000 00004087 00008b00 DPL=0 TSS64-busy
+GDT=     fffffe4d681fe000 0000007f
+IDT=     fffffe0000000000 00000fff
+CR0=80050033 CR2=00007ffbfcca6010 CR3=000000000573e003 CR4=00370ef0
+DR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000 
+DR6=00000000ffff0ff0 DR7=0000000000000400
+EFER=0000000000000d01
+FCW=037f FSW=0000 [ST=0] FTW=00 MXCSR=00001f80
+FPR0=0000000000000000 0000 FPR1=0000000000000000 0000
+FPR2=0000000000000000 0000 FPR3=0000000000000000 0000
+FPR4=0000000000000000 0000 FPR5=0000000000000000 0000
+FPR6=0000000000000000 0000 FPR7=0000000000000000 0000
+XMM00=00000000000000000000000000000000 XMM01=ffffffffffffffffffffffffffffffff
+XMM02=000000000000000000007ffda8a86ef1 XMM03=000000000000000200007fd1ced6478b
+XMM04=00000000000000008000000000000006 XMM05=00000000000000000000000000000000
+XMM06=00000000000000000000000000000000 XMM07=00000000000000000000000000000000
+XMM08=00002000202020200000000000200000 XMM09=0000000000ffffff000000ffffff0000
+XMM10=00000000000000000000000000000000 XMM11=00000000000000000000002000614007
+XMM12=00000000000000000000000000000000 XMM13=00000000000000000000000000000000
+XMM14=00000000000000000000000000000000 XMM15=0000000000000000000000e40fe2c1fc

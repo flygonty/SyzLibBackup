@@ -1,0 +1,79 @@
+------------[ cut here ]------------
+NETDEV WATCHDOG: eth0 (e1000): transmit queue 0 timed out
+WARNING: CPU: 0 PID: 18837 at net/sched/sch_generic.c:442 dev_watchdog+0x9ad/0xaf0
+Modules linked in:
+CPU: 0 PID: 18837 Comm: syz-executor Not tainted 5.10.1 #2
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+RIP: 0010:dev_watchdog+0x9ad/0xaf0
+Code: ff ff e8 46 86 39 fe 4c 89 e7 c6 05 08 4e f4 01 01 e8 27 4a f2 ff 89 e9 4c 89 e6 48 c7 c7 e0 ee 63 91 48 89 c2 e8 35 dc 8b 00 <0f> 0b e9 27 fe ff ff 48 c7 44 24 30 80 b9 c0 91 e9 d9 fc ff ff 48
+RSP: 0018:ffff88806d009d90 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffed100da013a4
+RBP: 0000000000000000 R08: ffff88800693ad00 R09: ffffed100da05d33
+R10: ffff88806d02e997 R11: ffffed100da05d32 R12: ffff8880040b4000
+R13: dffffc0000000000 R14: ffff888007655800 R15: ffff8880040b4440
+FS:  0000555557330980(0000) GS:ffff88806d000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fffa45ec080 CR3: 0000000022228003 CR4: 0000000000370ef0
+Call Trace:
+ <IRQ>
+ call_timer_fn+0x3a/0x220
+ run_timer_softirq+0xe01/0x1400
+ __do_softirq+0x182/0x56b
+ asm_call_irq_on_stack+0xf/0x20
+ </IRQ>
+ do_softirq_own_stack+0x32/0x40
+ irq_exit_rcu+0x110/0x140
+ sysvec_apic_timer_interrupt+0x2e/0x80
+ asm_sysvec_apic_timer_interrupt+0x12/0x20
+RIP: 0010:_raw_spin_unlock_irqrestore+0x2c/0x50
+Code: ec 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 0f b6 04 02 48 89 fa 83 e2 07 38 d0 7f 04 84 c0 75 0a c6 07 00 56 9d <48> 83 c4 10 c3 48 89 74 24 08 48 89 3c 24 e8 e1 73 c8 fd 48 8b 74
+RSP: 0018:ffff88801b0dfc00 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: ffffffff8ea494c7
+RDX: 0000000000000000 RSI: 0000000000000246 RDI: ffffffff931ad830
+RBP: ffff88807b800000 R08: 0000000000000001 R09: ffffed1000d275a1
+R10: ffff88800693ad07 R11: ffffed1000d275a0 R12: ffff88807b64f000
+R13: ffffffff931ad830 R14: 0000000000000246 R15: fffffbfff2635b06
+ scan_gray_list+0x1e6/0x420
+ kmemleak_scan+0x72e/0xdd0
+ kmemleak_write+0x484/0x590
+ full_proxy_write+0x117/0x180
+ vfs_write+0x220/0x830
+ ksys_write+0x121/0x240
+ do_syscall_64+0x33/0x40
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7fe5a4d61ed7
+Code: eb b2 90 b8 6e 00 00 00 eb aa e8 f4 55 05 00 0f 1f 40 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
+RSP: 002b:00007fffa440ee78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fffa440f578 RCX: 00007fe5a4d61ed7
+RDX: 0000000000000004 RSI: 00007fe5a4e1c913 RDI: 0000000000000003
+RBP: 0000000000000002 R08: 00000000001ee16a R09: 0000000000000667
+R10: 00007fffa440ee40 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000018f0df R14: 0000000000000003 R15: 0000000000000000
+---[ end trace 5afb7db160e72e13 ]---
+e1000 0000:00:04.0 eth0: Reset adapter
+e1000: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+   7:	fc ff df
+   a:	48 89 fa             	mov    %rdi,%rdx
+   d:	48 c1 ea 03          	shr    $0x3,%rdx
+  11:	0f b6 04 02          	movzbl (%rdx,%rax,1),%eax
+  15:	48 89 fa             	mov    %rdi,%rdx
+  18:	83 e2 07             	and    $0x7,%edx
+  1b:	38 d0                	cmp    %dl,%al
+  1d:	7f 04                	jg     0x23
+  1f:	84 c0                	test   %al,%al
+  21:	75 0a                	jne    0x2d
+  23:	c6 07 00             	movb   $0x0,(%rdi)
+  26:	56                   	push   %rsi
+  27:	9d                   	popfq
+* 28:	48 83 c4 10          	add    $0x10,%rsp <-- trapping instruction
+  2c:	c3                   	retq
+  2d:	48 89 74 24 08       	mov    %rsi,0x8(%rsp)
+  32:	48 89 3c 24          	mov    %rdi,(%rsp)
+  36:	e8 e1 73 c8 fd       	callq  0xfdc8741c
+  3b:	48                   	rex.W
+  3c:	8b                   	.byte 0x8b
+  3d:	74                   	.byte 0x74

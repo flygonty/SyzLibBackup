@@ -1,0 +1,81 @@
+netlink: 65525 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65525 bytes leftover after parsing attributes in process `syz-executor.0'.
+------------[ cut here ]------------
+NETDEV WATCHDOG: eth0 (e1000): transmit queue 0 timed out
+WARNING: CPU: 0 PID: 0 at net/sched/sch_generic.c:442 dev_watchdog+0x9ad/0xaf0
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.10.1 #2
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+RIP: 0010:dev_watchdog+0x9ad/0xaf0
+Code: ff ff e8 46 86 39 fe 4c 89 e7 c6 05 08 4e f4 01 01 e8 27 4a f2 ff 89 e9 4c 89 e6 48 c7 c7 e0 ee 83 93 48 89 c2 e8 35 dc 8b 00 <0f> 0b e9 27 fe ff ff 48 c7 44 24 30 80 b9 e0 93 e9 d9 fc ff ff 48
+RSP: 0018:ffff88806d009d90 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffed100da013a4
+RBP: 0000000000000000 R08: 0000000000000001 R09: fffffbfff28ad8e1
+R10: ffffffff9456c707 R11: fffffbfff28ad8e0 R12: ffff888005c88000
+R13: dffffc0000000000 R14: ffff8880049cec00 R15: ffff888005c88440
+FS:  0000000000000000(0000) GS:ffff88806d000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555556b38b8 CR3: 00000000126f4002 CR4: 0000000000370ef0
+Call Trace:
+ <IRQ>
+ call_timer_fn+0x3a/0x220
+ run_timer_softirq+0xe01/0x1400
+ __do_softirq+0x182/0x56b
+ asm_call_irq_on_stack+0xf/0x20
+ </IRQ>
+ do_softirq_own_stack+0x32/0x40
+ irq_exit_rcu+0x110/0x140
+ sysvec_apic_timer_interrupt+0x2e/0x80
+ asm_sysvec_apic_timer_interrupt+0x12/0x20
+RIP: 0010:default_idle+0xe/0x10
+Code: ff ff 4c 89 ff e8 92 7f c8 fd e9 42 ff ff ff 4c 89 ff e8 85 7f c8 fd e9 dd fe ff ff e9 07 00 00 00 0f 00 2d 84 75 48 00 fb f4 <c3> 90 41 54 be 08 00 00 00 53 65 48 8b 1c 25 00 ed 01 00 48 89 df
+RSP: 0018:ffffffff93e07e30 EFLAGS: 00000202
+RAX: ffffffff92f9a990 RBX: ffffffff93e1bec0 RCX: ffffffff92f86c22
+RDX: 000000000032a9f2 RSI: 0000000000000004 RDI: ffff88806d032280
+RBP: fffffbfff27c37d8 R08: 0000000000000001 R09: ffffed100da06451
+R10: ffff88806d032283 R11: ffffed100da06450 R12: 0000000000000000
+R13: ffffffff9456df48 R14: 0000000000000000 R15: 0000000000000000
+ default_idle_call+0x69/0x1e0
+ do_idle+0x3b9/0x520
+ cpu_startup_entry+0x14/0x20
+ start_kernel+0x42b/0x44c
+ secondary_startup_64_no_verify+0xc2/0xcb
+---[ end trace 1eece88bb1c67a49 ]---
+e1000 0000:00:04.0 eth0: Reset adapter
+e1000: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+__nla_validate_parse: 6 callbacks suppressed
+netlink: 65517 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65517 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65517 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 'syz-executor.0': attribute type 1 has an invalid length.
+netlink: 65525 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65529 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65521 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65521 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65525 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65521 bytes leftover after parsing attributes in process `syz-executor.0'.
+netlink: 65521 bytes leftover after parsing attributes in process `syz-executor.0'.
+SELinux: unrecognized netlink message: protocol=0 nlmsg_type=0 sclass=netlink_route_socket pid=33876 comm=syz-executor.0
+tc_dump_action: action bad kind
+SELinux: unrecognized netlink message: protocol=0 nlmsg_type=7 sclass=netlink_route_socket pid=33910 comm=syz-executor.0
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	ff 4c 89 ff          	decl   -0x1(%rcx,%rcx,4)
+   4:	e8 92 7f c8 fd       	callq  0xfdc87f9b
+   9:	e9 42 ff ff ff       	jmpq   0xffffff50
+   e:	4c 89 ff             	mov    %r15,%rdi
+  11:	e8 85 7f c8 fd       	callq  0xfdc87f9b
+  16:	e9 dd fe ff ff       	jmpq   0xfffffef8
+  1b:	e9 07 00 00 00       	jmpq   0x27
+  20:	0f 00 2d 84 75 48 00 	verw   0x487584(%rip)        # 0x4875ab
+  27:	fb                   	sti
+  28:	f4                   	hlt
+* 29:	c3                   	retq <-- trapping instruction
+  2a:	90                   	nop
+  2b:	41 54                	push   %r12
+  2d:	be 08 00 00 00       	mov    $0x8,%esi
+  32:	53                   	push   %rbx
+  33:	65 48 8b 1c 25 00 ed 	mov    %gs:0x1ed00,%rbx
+  3a:	01 00
+  3c:	48 89 df             	mov    %rbx,%rdi

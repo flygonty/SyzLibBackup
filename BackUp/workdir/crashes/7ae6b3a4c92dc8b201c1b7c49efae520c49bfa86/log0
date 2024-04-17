@@ -1,0 +1,470 @@
+OpenSSH_8.2p1 Ubuntu-4ubuntu0.11, OpenSSL 1.1.1f  31 Mar 2020
+debug1: Reading configuration data /dev/null
+debug1: Connecting to localhost [127.0.0.1] port 23050.
+debug1: fd 3 clearing O_NONBLOCK
+debug1: Connection established.
+debug1: identity file /home/syz/Desktop/image/bullseye.id_rsa type 0
+debug1: identity file /home/syz/Desktop/image/bullseye.id_rsa-cert type -1
+debug1: Local version string SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.11
+debug1: Remote protocol version 2.0, remote software version OpenSSH_8.4p1 Debian-5+deb11u3
+debug1: match: OpenSSH_8.4p1 Debian-5+deb11u3 pat OpenSSH* compat 0x04000000
+debug1: Authenticating to localhost:23050 as 'root'
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: algorithm: curve25519-sha256
+debug1: kex: host key algorithm: ecdsa-sha2-nistp256
+debug1: kex: server->client cipher: chacha20-poly1305@openssh.com MAC: <implicit> compression: none
+debug1: kex: client->server cipher: chacha20-poly1305@openssh.com MAC: <implicit> compression: none
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: Server host key: ecdsa-sha2-nistp256 SHA256:Xr/yTHUZR1HfIz3q2G8KGghXYfYV0vmOjiC1PEJ2TBg
+debug1: checking without port identifier
+Warning: Permanently added '[localhost]:23050' (ECDSA) to the list of known hosts.
+debug1: resetting send seqnr 3
+debug1: rekey out after 134217728 blocks
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: resetting read seqnr 3
+debug1: SSH2_MSG_NEWKEYS received
+debug1: rekey in after 134217728 blocks
+debug1: Will attempt key: /home/syz/Desktop/image/bullseye.id_rsa RSA SHA256:dmdEoFjPJ57rhhuvxIxr6PXyHswmnQWXAou6qDkiuDA explicit
+debug1: SSH2_MSG_EXT_INFO received
+debug1: kex_input_ext_info: server-sig-algs=<ssh-ed25519,sk-ssh-ed25519@openssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com,webauthn-sk-ecdsa-sha2-nistp256@openssh.com>
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+debug1: Authentications that can continue: publickey,password
+debug1: Next authentication method: publickey
+debug1: Offering public key: /home/syz/Desktop/image/bullseye.id_rsa RSA SHA256:dmdEoFjPJ57rhhuvxIxr6PXyHswmnQWXAou6qDkiuDA explicit
+debug1: Server accepts key: /home/syz/Desktop/image/bullseye.id_rsa RSA SHA256:dmdEoFjPJ57rhhuvxIxr6PXyHswmnQWXAou6qDkiuDA explicit
+debug1: Authentication succeeded (publickey).
+Authenticated to localhost ([127.0.0.1]:23050).
+debug1: Remote connections from LOCALHOST:46189 forwarded to local address 127.0.0.1:46189
+debug1: channel 0: new [client-session]
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug1: pledge: network
+debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_reply 0
+debug1: Remote: /root/.ssh/authorized_keys:1: key options: agent-forwarding port-forwarding pty user-rc x11-forwarding
+debug1: Remote: /root/.ssh/authorized_keys:1: key options: agent-forwarding port-forwarding pty user-rc x11-forwarding
+debug1: remote forward success for: listen 46189, connect 127.0.0.1:46189
+debug1: All remote forwarding requests processed
+debug1: Sending command: cd / && /syz-fuzzer -executor=/syz-executor -name=vm-0 -arch=amd64 -manager=localhost:46189 -sandbox=none -procs=1 -cover=true -debug=true -test=false -vv=100 -optional=slowdown=1:raw_cover=false:sandbox_arg=0:pprof_port=6060:reset_acc_state=false
+2024/04/04 17:16:11 fuzzer started
+2024/04/04 17:16:11 dialing manager at localhost:46189
+debug1: client_input_channel_open: ctype forwarded-tcpip rchan 3 win 2097152 max 32768
+debug1: client_request_forwarded_tcpip: listen localhost port 46189, originator 127.0.0.1 port 41702
+debug1: connect_next: host 127.0.0.1 ([127.0.0.1]:46189) in progress, fd=4
+debug1: channel 1: new [127.0.0.1]
+debug1: confirm forwarded-tcpip
+debug1: channel 1: connected to 127.0.0.1 port 46189
+2024/04/04 17:16:11 connecting to manager...
+syzkaller login: [   42.385798] cgroup: Unknown subsys name 'net'
+[   42.390405] cgroup: Unknown subsys name 'net_prio'
+[   42.396258] cgroup: Unknown subsys name 'devices'
+[   42.400781] cgroup: Unknown subsys name 'blkio'
+[   42.446343] cgroup: Unknown subsys name 'hugetlb'
+[   42.452737] cgroup: Unknown subsys name 'rlimit'
+[   54.678998] Adding 124996k swap on ./swap-file.  Priority:0 extents:1 across:124996k 
+2024/04/04 17:16:24 executor [setup leak fault binfmt_misc swap]
+write(cgroup.subtree_control, +io) failed: 22
+mount(/syzcgroup/net, net) failed: 22
+mount(/syzcgroup/net, net_prio) failed: 22
+mount(/syzcgroup/net, devices) failed: 22
+mount(/syzcgroup/net, blkio) failed: 22
+mount(/syzcgroup/cpu, hugetlb) failed: 22
+mount(/syzcgroup/cpu, rlimit) failed: 22
+mount(/syzcgroup/cpu, memory) failed: 16
+mount(binfmt_misc) failed: 16
+mkswap ./swap-file
+Setting up swapspace version 1, size = 122.1 MiB (127995904 bytes)
+no label, UUID=c4dba078-ec95-46c8-aef9-ba347e90dc58
+write to /proc/sys/net/core/bpf_jit_kallsyms failed: No such file or directory
+write to /proc/sys/net/core/bpf_jit_harden failed: No such file or directory
+2024/04/04 17:16:24 syscalls: 16
+2024/04/04 17:16:24 code coverage: enabled
+2024/04/04 17:16:24 comparison tracing: enabled
+2024/04/04 17:16:24 extra coverage: enabled
+2024/04/04 17:16:24 delay kcov mmap: mmap returned an invalid pointer
+2024/04/04 17:16:24 setuid sandbox: enabled
+2024/04/04 17:16:24 namespace sandbox: enabled
+2024/04/04 17:16:24 Android sandbox: enabled
+2024/04/04 17:16:24 fault injection: enabled
+2024/04/04 17:16:24 leak checking: enabled
+2024/04/04 17:16:24 net packet injection: /dev/net/tun does not exist
+2024/04/04 17:16:24 net device setup: enabled
+2024/04/04 17:16:24 concurrency sanitizer: /sys/kernel/debug/kcsan does not exist
+2024/04/04 17:16:24 devlink PCI setup: PCI device 0000:00:10.0 is not available
+2024/04/04 17:16:24 NIC VF setup: PCI device 0000:00:11.0 is not available
+2024/04/04 17:16:24 USB emulation: /dev/raw-gadget does not exist
+2024/04/04 17:16:24 hci packet injection: /dev/vhci does not exist
+2024/04/04 17:16:24 wifi device emulation: /sys/class/mac80211_hwsim/ does not exist
+2024/04/04 17:16:24 802.15.4 emulation: /sys/bus/platform/devices/mac802154_hwsim does not exist
+2024/04/04 17:16:24 swap file: enabled
+2024/04/04 17:16:25 poll: candidates=0 inputs=50 signal=2000
+2024/04/04 17:16:25 fetching corpus: 50, signal 3843/2000 (executing program)
+2024/04/04 17:16:25 poll: candidates=0 inputs=50 signal=2000
+2024/04/04 17:16:25 fetching corpus: 100, signal 7172/4000 (executing program)
+2024/04/04 17:16:25 poll: candidates=0 inputs=50 signal=2000
+2024/04/04 17:16:25 fetching corpus: 150, signal 8023/6000 (executing program)
+2024/04/04 17:16:25 poll: candidates=0 inputs=50 signal=2000
+2024/04/04 17:16:25 fetching corpus: 200, signal 8782/8000 (executing program)
+2024/04/04 17:16:25 poll: candidates=0 inputs=50 signal=2000
+2024/04/04 17:16:25 fetching corpus: 250, signal 9141/10000 (executing program)
+2024/04/04 17:16:25 poll: candidates=0 inputs=8 signal=2000
+2024/04/04 17:16:25 fetching corpus: 258, signal 9280/12000 (executing program)
+2024/04/04 17:16:25 poll: candidates=0 inputs=0 signal=2000
+2024/04/04 17:16:25 fetching corpus: 258, signal 9280/14000 (executing program)
+2024/04/04 17:16:25 poll: candidates=0 inputs=0 signal=2000
+2024/04/04 17:16:25 fetching corpus: 258, signal 9280/16000 (executing program)
+2024/04/04 17:16:25 poll: candidates=0 inputs=0 signal=1611
+2024/04/04 17:16:25 fetching corpus: 258, signal 9280/17611 (executing program)
+2024/04/04 17:16:25 poll: candidates=0 inputs=0 signal=0
+2024/04/04 17:16:25 fetching corpus: 258, signal 9280/17611 (executing program)
+2024/04/04 17:16:25 starting 1 fuzzer processes
+[   56.204628] audit: type=1400 audit(1712250985.837:6): avc:  denied  { execmem } for  pid=274 comm="syz-executor.0" scontext=system_u:system_r:kernel_t:s0 tcontext=system_u:system_r:kernel_t:s0 tclass=process permissive=1
+bitmap is not found, coverage filter disabled
+spawned loop pid 275
+mount(fusectl) failed: 2
+netlink: add addr 172.30.0.1 dev nr0: No such device
+netlink: device nr0 up master NULL: No such device
+netlink: add addr 172.30.1.1 dev rose0: No such device
+netlink: device rose0 up master NULL: No such device
+netlink: adding device ip6gretap0 type ip6gretap: Operation not supported
+netlink: adding device bridge0 type bridge: Operation not supported
+netlink: adding device vcan0 type vcan: Operation not supported
+netlink: adding device bond0 type bond: Operation not supported
+netlink: adding device team0 type team: Operation not supported
+netlink: adding device dummy0 type dummy: Operation not supported
+netlink: adding device nicvf0 type nicvf: Operation not supported
+netlink: adding device nlmon0 type nlmon: Operation not supported
+netlink: adding device caif0 type caif: Operation not supported
+netlink: adding device batadv0 type batadv: Operation not supported
+netlink: adding device vxcan1 type vxcan: Operation not supported
+netlink: adding device (null) type veth: Operation not supported
+netlink: adding device wg0 type wireguard: Operation not supported
+netlink: adding device wg1 type wireguard: Operation not supported
+netlink: adding device wg2 type wireguard: Operation not supported
+netlink: adding device bridge_slave_0 type veth peer veth0_to_bridge: Operation not supported
+netlink: adding device bridge_slave_1 type veth peer veth1_to_bridge: Operation not supported
+netlink: device bridge_slave_0 up master bridge0: No such device
+netlink: device bridge_slave_1 up master bridge0: No such device
+netlink: adding device bond_slave_0 type veth peer veth0_to_bond: Operation not supported
+netlink: adding device bond_slave_1 type veth peer veth1_to_bond: Operation not supported
+netlink: device bond_slave_0 up master bond0: No such device
+netlink: device bond_slave_1 up master bond0: No such device
+netlink: adding device team_slave_0 type veth peer veth0_to_team: Operation not supported
+netlink: adding device team_slave_1 type veth peer veth1_to_team: Operation not supported
+netlink: device team_slave_0 up master team0: No such device
+netlink: device team_slave_1 up master team0: No such device
+netlink: adding device batadv_slave_0 type veth peer veth0_to_batadv: Operation not supported
+netlink: adding device batadv_slave_1 type veth peer veth1_to_batadv: Operation not supported
+netlink: device batadv_slave_0 up master batadv0: No such device
+netlink: device batadv_slave_1 up master batadv0: No such device
+netlink: adding device xfrm0 type xfrm if_id 1: Operation not supported
+netlink: device bridge_slave_0 up master NULL: No such device
+netlink: device bridge_slave_1 up master NULL: No such device
+netlink: adding device hsr_slave_0 type veth peer veth0_to_hsr: Operation not supported
+netlink: adding device hsr_slave_1 type veth peer veth1_to_hsr: Operation not supported
+netlink: adding device hsr0 type hsr slave1 hsr_slave_0 slave2 hsr_slave_1: Operation not supported
+netlink: device hsr_slave_0 up master NULL: No such device
+netlink: device hsr_slave_1 up master NULL: No such device
+netlink: adding device veth0_virt_wifi type veth peer veth1_virt_wifi: Operation not supported
+netlink: adding device virt_wifi0 type virt_wifi link veth1_virt_wifi: Operation not supported
+netlink: adding device veth0_vlan type veth peer veth1_vlan: Operation not supported
+netlink: add vlan0 type vlan link veth0_vlan id 0: Operation not supported
+netlink: add vlan1 type vlan link veth0_vlan id 1: Operation not supported
+netlink: add macvlan0 type macvlan link veth1_vlan mode 4: Operation not supported
+netlink: add macvlan1 type macvlan link veth1_vlan mode 4: Operation not supported
+netlink: add ipvlan0 type ipvlan link veth0_vlan mode 0: Operation not supported
+netlink: add ipvlan1 type ipvlan link veth0_vlan mode 2: Operation not supported
+netlink: adding device veth0_macvtap type veth peer veth1_macvtap: Operation not supported
+netlink: adding device macvtap0 type macvtap link veth0_macvtap: Operation not supported
+netlink: adding device macsec0 type macsec link veth1_macvtap: Operation not supported
+netlink: add geneve0 type geneve vni 0: Operation not supported
+netlink: add geneve1 type geneve vni 1: Operation not supported
+netlink: failed to get family id for wireguard: No such file or directory
+netlink: add addr 172.20.20.12 dev bridge0: No such device
+netlink: add addr fe80::0c dev bridge0: No such device
+netlink: device bridge0 up master NULL: No such device
+netlink: add addr 172.20.20.13 dev vcan0: No such device
+netlink: device vcan0 up master NULL: No such device
+netlink: add addr 172.20.20.14 dev tunl0: No such device
+netlink: add addr fe80::0e dev tunl0: No such device
+netlink: device tunl0 up master NULL: No such device
+netlink: add addr 172.20.20.15 dev gre0: No such device
+netlink: add addr fe80::0f dev gre0: No such device
+[  300.631040] rcu: INFO: rcu_sched self-detected stall on CPU
+[  300.637547] rcu: 	1-...!: (1 GPs behind) idle=732/1/0x4000000000000000 softirq=32050/32051 fqs=0 
+[  300.643378] 	(t=241824 jiffies g=26117 q=167)
+[  300.645964] rcu: rcu_sched kthread starved for 241827 jiffies! g26117 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+[  300.655728] rcu: 	Unless rcu_sched kthread gets sufficient CPU time, OOM is now expected behavior.
+[  300.663502] rcu: RCU grace-period kthread stack dump:
+[  300.667741] task:rcu_sched       state:R  running task     stack:28656 pid:   10 ppid:     2 flags:0x00004000
+[  300.674906] Call Trace:
+[  300.676742]  __schedule+0x894/0x1e10
+[  300.679132]  ? __sched_text_start+0x8/0x8
+[  300.681663]  schedule+0xcb/0x270
+[  300.684991]  schedule_timeout+0x4bc/0x8a0
+[  300.689304]  ? usleep_range+0x170/0x170
+[  300.693099]  ? lockdep_hardirqs_on_prepare+0x273/0x3e0
+[  300.697822]  ? __next_timer_interrupt+0x220/0x220
+[  300.700967]  ? swake_up_one+0x60/0x60
+[  300.703429]  ? rcu_read_lock_bh_held+0xb0/0xb0
+[  300.707148]  rcu_gp_kthread+0xad0/0x2820
+[  300.709879]  ? rcu_core_si+0x10/0x10
+[  300.712333]  ? __kthread_parkme+0x69/0x1d0
+[  300.717161]  ? lockdep_hardirqs_on_prepare+0x273/0x3e0
+[  300.723421]  ? __kthread_parkme+0x118/0x1d0
+[  300.727416]  ? rcu_core_si+0x10/0x10
+[  300.730762]  kthread+0x34f/0x460
+[  300.732768]  ? _raw_spin_unlock_irq+0x1f/0x30
+[  300.735701]  ? kthread_create_on_node+0xf0/0xf0
+[  300.738918]  ret_from_fork+0x1f/0x30
+[  300.742045] NMI backtrace for cpu 1
+[  300.744673] CPU: 1 PID: 409 Comm: kworker/u4:2 Not tainted 5.10.1 #4
+[  300.751772] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+[  300.761299] Call Trace:
+[  300.763762]  <IRQ>
+[  300.765377]  dump_stack+0x107/0x163
+[  300.767665]  ? lapic_can_unplug_cpu+0x1/0x80
+[  300.770155]  nmi_cpu_backtrace.cold+0xb9/0xbe
+[  300.773692]  ? lapic_can_unplug_cpu+0x80/0x80
+[  300.776438]  nmi_trigger_cpumask_backtrace+0x1a4/0x1b0
+[  300.780099]  rcu_dump_cpu_stacks+0x19b/0x1e5
+[  300.786010]  rcu_sched_clock_irq.cold+0x583/0x9ed
+[  300.791192]  ? __raise_softirq_irqoff+0x147/0x190
+[  300.795836]  update_process_times+0x77/0xd0
+[  300.799124]  tick_sched_handle.isra.0+0x91/0x180
+[  300.803380]  tick_sched_timer+0x103/0x140
+[  300.806995]  __hrtimer_run_queues+0x57b/0xc20
+[  300.810873]  ? tick_sched_do_timer+0x1a0/0x1a0
+[  300.814322]  ? enqueue_hrtimer+0x310/0x310
+[  300.817491]  ? ktime_get_update_offsets_now+0x259/0x360
+[  300.822242]  hrtimer_interrupt+0x2eb/0x730
+[  300.826282]  __sysvec_apic_timer_interrupt+0xfb/0x3f0
+[  300.830701]  asm_call_irq_on_stack+0xf/0x20
+[  300.834454]  </IRQ>
+[  300.836560]  sysvec_apic_timer_interrupt+0x84/0xa0
+[  300.841172]  asm_sysvec_apic_timer_interrupt+0x12/0x20
+[  300.845404] RIP: 0010:up_write+0x0/0x460
+[  300.850140] Code: 4c 8b 44 24 08 e9 5c fe ff ff 48 89 ef e8 b8 92 45 00 e9 2c fe ff ff 4c 89 e7 e8 ab 92 45 00 e9 d1 fd ff ff 66 0f 1f 44 00 00 <41> 57 41 56 41 55 41 54 55 48 89 fd 48 83 c7 70 53 48 c7 c3 98 ef
+[  300.868271] RSP: 0018:ffff88802b82fa30 EFLAGS: 00010282
+[  300.873474] RAX: dffffc0000000000 RBX: ffff888005d5b000 RCX: ffffffffb7a73b6f
+[  300.880339] RDX: 1ffff11000bab600 RSI: 0000000000000004 RDI: ffff888005d5b008
+[  300.887661] RBP: ffff888011193600 R08: 0000000000000001 R09: ffffed1000fcbb08
+[  300.894359] R10: ffff888007e5d83b R11: ffffed1000fcbb07 R12: 0000000000000000
+[  300.900973] R13: ffff888007e5d838 R14: ffff888011193678 R15: ffff888015ddc670
+[  300.907502]  ? do_raw_spin_unlock+0x4f/0x250
+[  300.911504]  __anon_vma_prepare+0x26f/0x500
+[  300.915136]  ? __pte_alloc+0x194/0x320
+[  300.918882]  handle_mm_fault+0x2d10/0x3940
+[  300.922947]  ? rcu_read_lock_sched_held+0x9c/0xd0
+[  300.928324]  ? rcu_read_lock_bh_held+0xb0/0xb0
+[  300.932539]  ? __pmd_alloc+0x5e0/0x5e0
+[  300.936548]  __get_user_pages+0x79d/0x1710
+[  300.940895]  ? follow_page_mask+0x1860/0x1860
+[  300.944648]  ? rcu_read_lock_sched_held+0x9c/0xd0
+[  300.947834]  __get_user_pages_remote+0x1d8/0x810
+[  300.952680]  ? alloc_bprm+0x58d/0x8f0
+[  300.957109]  get_user_pages_remote+0x63/0x90
+[  300.961543]  get_arg_page+0xb8/0x200
+[  300.964018]  ? acct_arg_size.isra.0+0xe0/0xe0
+[  300.967096]  copy_string_kernel+0x1b7/0x450
+[  300.970014]  ? _cond_resched+0x10/0x20
+[  300.973019]  kernel_execve+0x25b/0x470
+[  300.976983]  call_usermodehelper_exec_async+0x2e1/0x580
+[  300.981799]  ? _raw_spin_unlock_irq+0x1f/0x30
+[  300.986783]  ? trace_hardirqs_on+0x5b/0x180
+[  300.991141]  ? umh_complete+0x90/0x90
+[  300.994934]  ret_from_fork+0x1f/0x30
+[  301.233640] systemd[1]: systemd-udevd.service: Watchdog timeout (limit 3min)!
+[  301.248565] systemd[1]: systemd-udevd.service: Killing process 118 (systemd-udevd) with signal SIGABRT.
+2024/04/04 17:20:31 fuzzer detected executor failure='executor 0: not serving
+', retrying #1
+[  301.450082] systemd[1]: systemd-journald.service: Main process exited, code=killed, status=6/ABRT
+[  301.500482] syz-executor.0 (275) used greatest stack depth: 23952 bytes left
+[  301.507166] systemd[1]: systemd-journald.service: Failed with result 'watchdog'.
+2024/04/04 17:20:31 poll: candidates=0 inputs=0 signal=0
+[  301.597330] systemd[1]: systemd-journald.service: Consumed 1.698s CPU time.
+[  301.634950] systemd[1]: systemd-udevd.service: Main process exited, code=killed, status=6/ABRT
+[  301.651443] systemd[1]: systemd-udevd.service: Failed with result 'watchdog'.
+[  301.722916] systemd[1]: systemd-udevd.service: Consumed 6.497s CPU time.
+[  301.804204] systemd[1]: systemd-journald.service: Scheduled restart job, restart counter is at 1.
+[  301.823868] systemd[1]: systemd-udevd.service: Scheduled restart job, restart counter is at 1.
+[  301.918758] systemd[1]: Stopping Flush Journal to Persistent Storage...
+[  301.933234] systemd[1]: Stopped Rule-based Manager for Device Events and Files.
+[  301.948559] systemd[1]: systemd-udevd.service: Consumed 6.497s CPU time.
+[  302.040752] systemd[1]: Starting Rule-based Manager for Device Events and Files...
+[  302.108406] systemd[1]: systemd-journal-flush.service: Succeeded.
+[  302.138455] systemd[1]: Stopped Flush Journal to Persistent Storage.
+[  302.148045] systemd[1]: Stopped Journal Service.
+[  302.153440] systemd[1]: systemd-journald.service: Consumed 1.698s CPU time.
+2024/04/04 17:20:31 poll: candidates=0 inputs=0 signal=0
+[  302.249438] systemd[1]: Starting Journal Service...
+[  302.589957] systemd-journald[415]: File /var/log/journal/bdd60595722d49c9820c52cbaa0e3bf4/system.journal corrupted or uncleanly shut down, renaming and replacing.
+[  302.703045] systemd[1]: Started Rule-based Manager for Device Events and Files.
+[  302.763241] systemd[1]: Started Journal Service.
+[  302.923161] systemd-journald[415]: Received client request to flush runtime journal.
+bitmap is not found, coverage filter disabled
+spawned loop pid 419
+mount(fusectl) failed: 2
+netlink: add addr 172.30.0.1 dev nr0: No such device
+netlink: device nr0 up master NULL: No such device
+netlink: add addr 172.30.1.1 dev rose0: No such device
+netlink: device rose0 up master NULL: No such device
+netlink: adding device ip6gretap0 type ip6gretap: Operation not supported
+netlink: adding device bridge0 type bridge: Operation not supported
+netlink: adding device vcan0 type vcan: Operation not supported
+netlink: adding device bond0 type bond: Operation not supported
+netlink: adding device team0 type team: Operation not supported
+netlink: adding device dummy0 type dummy: Operation not supported
+netlink: adding device nicvf0 type nicvf: Operation not supported
+netlink: adding device nlmon0 type nlmon: Operation not supported
+netlink: adding device caif0 type caif: Operation not supported
+netlink: adding device batadv0 type batadv: Operation not supported
+netlink: adding device vxcan1 type vxcan: Operation not supported
+netlink: adding device (null) type veth: Operation not supported
+netlink: adding device wg0 type wireguard: Operation not supported
+netlink: adding device wg1 type wireguard: Operation not supported
+netlink: adding device wg2 type wireguard: Operation not supported
+netlink: adding device bridge_slave_0 type veth peer veth0_to_bridge: Operation not supported
+netlink: adding device bridge_slave_1 type veth peer veth1_to_bridge: Operation not supported
+netlink: device bridge_slave_0 up master bridge0: No such device
+netlink: device bridge_slave_1 up master bridge0: No such device
+netlink: adding device bond_slave_0 type veth peer veth0_to_bond: Operation not supported
+netlink: adding device bond_slave_1 type veth peer veth1_to_bond: Operation not supported
+netlink: device bond_slave_0 up master bond0: No such device
+netlink: device bond_slave_1 up master bond0: No such device
+netlink: adding device team_slave_0 type veth peer veth0_to_team: Operation not supported
+netlink: adding device team_slave_1 type veth peer veth1_to_team: Operation not supported
+2024/04/04 17:20:34 poll: candidates=0 inputs=0 signal=0
+netlink: device team_slave_0 up master team0: No such device
+netlink: device team_slave_1 up master team0: No such device
+netlink: adding device batadv_slave_0 type veth peer veth0_to_batadv: Operation not supported
+netlink: adding device batadv_slave_1 type veth peer veth1_to_batadv: Operation not supported
+netlink: device batadv_slave_0 up master batadv0: No such device
+netlink: device batadv_slave_1 up master batadv0: No such device
+netlink: adding device xfrm0 type xfrm if_id 1: Operation not supported
+netlink: device bridge_slave_0 up master NULL: No such device
+netlink: device bridge_slave_1 up master NULL: No such device
+netlink: adding device hsr_slave_0 type veth peer veth0_to_hsr: Operation not supported
+netlink: adding device hsr_slave_1 type veth peer veth1_to_hsr: Operation not supported
+netlink: adding device hsr0 type hsr slave1 hsr_slave_0 slave2 hsr_slave_1: Operation not supported
+netlink: device hsr_slave_0 up master NULL: No such device
+netlink: device hsr_slave_1 up master NULL: No such device
+netlink: adding device veth0_virt_wifi type veth peer veth1_virt_wifi: Operation not supported
+netlink: adding device virt_wifi0 type virt_wifi link veth1_virt_wifi: Operation not supported
+netlink: adding device veth0_vlan type veth peer veth1_vlan: Operation not supported
+netlink: add vlan0 type vlan link veth0_vlan id 0: Operation not supported
+netlink: add vlan1 type vlan link veth0_vlan id 1: Operation not supported
+netlink: add macvlan0 type macvlan link veth1_vlan mode 4: Operation not supported
+netlink: add macvlan1 type macvlan link veth1_vlan mode 4: Operation not supported
+netlink: add ipvlan0 type ipvlan link veth0_vlan mode 0: Operation not supported
+netlink: add ipvlan1 type ipvlan link veth0_vlan mode 2: Operation not supported
+netlink: adding device veth0_macvtap type veth peer veth1_macvtap: Operation not supported
+netlink: adding device macvtap0 type macvtap link veth0_macvtap: Operation not supported
+netlink: adding device macsec0 type macsec link veth1_macvtap: Operation not supported
+netlink: add geneve0 type geneve vni 0: Operation not supported
+netlink: add geneve1 type geneve vni 1: Operation not supported
+netlink: failed to get family id for wireguard: No such file or directory
+netlink: add addr 172.20.20.12 dev bridge0: No such device
+netlink: add addr fe80::0c dev bridge0: No such device
+netlink: device bridge0 up master NULL: No such device
+2024/04/04 17:20:37 poll: candidates=0 inputs=0 signal=0
+netlink: add addr 172.20.20.13 dev vcan0: No such device
+netlink: device vcan0 up master NULL: No such device
+netlink: add addr 172.20.20.14 dev tunl0: No such device
+netlink: add addr fe80::0e dev tunl0: No such device
+netlink: device tunl0 up master NULL: No such device
+netlink: add addr 172.20.20.15 dev gre0: No such device
+netlink: add addr fe80::0f dev gre0: No such device
+netlink: device gre0 up master NULL: No such device
+netlink: add addr 172.20.20.16 dev gretap0: No such device
+netlink: add addr fe80::10 dev gretap0: No such device
+netlink: device gretap0 up master NULL: No such device
+netlink: add addr 172.20.20.17 dev ip_vti0: No such device
+netlink: add addr fe80::11 dev ip_vti0: No such device
+netlink: device ip_vti0 up master NULL: No such device
+netlink: add addr 172.20.20.18 dev ip6_vti0: No such device
+netlink: add addr fe80::12 dev ip6_vti0: No such device
+netlink: device ip6_vti0 up master NULL: No such device
+netlink: add addr 172.20.20.19 dev ip6tnl0: No such device
+netlink: add addr fe80::13 dev ip6tnl0: No such device
+netlink: device ip6tnl0 up master NULL: No such device
+netlink: add addr 172.20.20.20 dev ip6gre0: No such device
+netlink: add addr fe80::14 dev ip6gre0: No such device
+netlink: device ip6gre0 up master NULL: No such device
+netlink: add addr 172.20.20.21 dev ip6gretap0: No such device
+netlink: add addr fe80::15 dev ip6gretap0: No such device
+netlink: device ip6gretap0 up master NULL: No such device
+netlink: add addr 172.20.20.22 dev erspan0: No such device
+netlink: add addr fe80::16 dev erspan0: No such device
+netlink: device erspan0 up master NULL: No such device
+netlink: add addr 172.20.20.23 dev bond0: No such device
+
+VM DIAGNOSIS:
+10:20:32  Registers:
+info registers vcpu 0
+RAX=ffffffffbaa49ac0 RBX=ffffffffbae85c81 RCX=ffffffffb7a698cd RDX=ffffffffbaa49ac0
+RSI=ffffffffbaa49ac0 RDI=ffffffffbae85c80 RBP=0000000000000026 RSP=ffff88806ce099c8
+R8 =0000000000000001 R9 =ffffffffbcd08a00 R10=ffffffffbcd08687 R11=dffffc0000000000
+R12=ffffffffbcd468c0 R13=dffffc0000000000 R14=ffffffffbaa49ac0 R15=ffff88806ce09d88
+RIP=ffffffffb87a99ac RFL=00000046 [---Z-P-] CPL=0 II=0 A20=1 SMM=0 HLT=0
+ES =0000 0000000000000000 ffffffff 00c00100
+CS =0010 0000000000000000 ffffffff 00a09b00 DPL=0 CS64 [-RA]
+SS =0018 0000000000000000 ffffffff 00c09300 DPL=0 DS   [-WA]
+DS =0000 0000000000000000 ffffffff 00c00100
+FS =0000 0000000000000000 ffffffff 00c00100
+GS =0000 ffff88806ce00000 ffffffff 00c00100
+LDT=0000 0000000000000000 ffffffff 00c00000
+TR =0040 fffffe0000003000 00004087 00008b00 DPL=0 TSS64-busy
+GDT=     fffffe0000001000 0000007f
+IDT=     fffffe0000000000 00000fff
+CR0=80050033 CR2=00007f9b7d13c6f4 CR3=0000000021426005 CR4=00370ef0
+DR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000 
+DR6=00000000ffff0ff0 DR7=0000000000000400
+EFER=0000000000000d01
+FCW=037f FSW=0000 [ST=0] FTW=00 MXCSR=00001f80
+FPR0=0000000000000000 0000 FPR1=0000000000000000 0000
+FPR2=0000000000000000 0000 FPR3=0000000000000000 0000
+FPR4=0000000000000000 0000 FPR5=0000000000000000 0000
+FPR6=0000000000000000 0000 FPR7=0000000000000000 0000
+XMM00=00000000000000000000000000000000 XMM01=00007f9b7d14b47000007f9b7d14af20
+XMM02=00000000000000000000000000000000 XMM03=756e20796d6d756420736e6f6974706f
+XMM04=2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f XMM05=00000000000000000000000000000000
+XMM06=00000000000000000000000000000000 XMM07=00000000000000000000000000000000
+XMM08=73253d656d616e6c6165722073253d73 XMM09=00000000000000000000000000000000
+XMM10=00000000000000000000000000000000 XMM11=00000000000000000000000000000000
+XMM12=00000000000000000000000000000000 XMM13=00000000000000000000000000000000
+XMM14=00000000000000000000000000000000 XMM15=00000000000000000000000000000000
+info registers vcpu 1
+RAX=dffffc0000000060 RBX=00000000000003fd RCX=0000000000000000 RDX=00000000000003fd
+RSI=0000000000000005 RDI=ffffffffbde8ed40 RBP=ffffffffbde8ed00 RSP=ffff88806cf09888
+R8 =ffff8880107f0000 R9 =ffffed100d9e1317 R10=0000000000000003 R11=ffffed100d9e1316
+R12=0000000000000020 R13=fffffbfff7bd1df3 R14=fffffbfff7bd1daa R15=dffffc0000000000
+RIP=ffffffffb8a51960 RFL=00000002 [-------] CPL=0 II=0 A20=1 SMM=0 HLT=0
+ES =0000 0000000000000000 ffffffff 00c00100
+CS =0010 0000000000000000 ffffffff 00a09b00 DPL=0 CS64 [-RA]
+SS =0018 0000000000000000 ffffffff 00c09300 DPL=0 DS   [-WA]
+DS =0000 0000000000000000 ffffffff 00c00100
+FS =0000 0000000000000000 ffffffff 00c00100
+GS =0000 ffff88806cf00000 ffffffff 00c00100
+LDT=0000 0000000000000000 00000000 00000000
+TR =0040 fffffe000003e000 00004087 00008b00 DPL=0 TSS64-busy
+GDT=     fffffe000003c000 0000007f
+IDT=     fffffe0000000000 00000fff
+CR0=80050033 CR2=00007f28f89246f4 CR3=000000002723e006 CR4=00370ee0
+DR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000 
+DR6=00000000ffff0ff0 DR7=0000000000000400
+EFER=0000000000000d01
+FCW=037f FSW=0000 [ST=0] FTW=00 MXCSR=00001f80
+FPR0=0000000000000000 0000 FPR1=0000000000000000 0000
+FPR2=0000000000000000 0000 FPR3=0000000000000000 0000
+FPR4=0000000000000000 0000 FPR5=0000000000000000 0000
+FPR6=0000000000000000 0000 FPR7=0000000000000000 0000
+XMM00=00000000000000000000000000000000 XMM01=d690fda7b0062ac49451170beef5d9a5
+XMM02=e93f49f6b010e899d4d3d0963cdf71c8 XMM03=572359ba197abdb5d23b312a727289c3
+XMM04=00000000000000000000000000000000 XMM05=00000000000000000000000000000000
+XMM06=0d0c0f0e09080b0a0504070601000302 XMM07=0e0d0c0f0a09080b0605040702010003
+XMM08=00000000000000000000000000000000 XMM09=00000000000000000000000000000000
+XMM10=00000000000000000000000000000000 XMM11=00000000000000000000000000000000
+XMM12=00000000000000000000000000000000 XMM13=00000000000000000000000000000000
+XMM14=00000000000000000000000000000000 XMM15=00000000000000000000000000000000

@@ -1,0 +1,68 @@
+watchdog: BUG: soft lockup - CPU#1 stuck for 82s! [syz-executor.0:7778]
+Modules linked in:
+irq event stamp: 12509
+hardirqs last  enabled at (12508): [<ffffffffb647e4d4>] _raw_spin_unlock_irqrestore+0x34/0x40
+hardirqs last disabled at (12509): [<ffffffffb64644fb>] sysvec_apic_timer_interrupt+0xb/0xa0
+softirqs last  enabled at (12462): [<ffffffffb680051e>] __do_softirq+0x51e/0x7ca
+softirqs last disabled at (12469): [<ffffffffb6600f8f>] asm_call_irq_on_stack+0xf/0x20
+CPU: 1 PID: 7778 Comm: syz-executor.0 Not tainted 5.10.1 #4
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x60
+Code: 16 2b 00 e9 44 fe ff ff cc cc 65 48 8b 04 25 40 ef 01 00 48 8b 80 58 13 00 00 c3 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 <48> 8b 0c 24 65 48 8b 04 25 40 ef 01 00 65 8b 15 1c 6c 42 4c f7 c2
+RSP: 0018:ffff88806cf09c28 EFLAGS: 00000246
+RAX: ffff888006f46500 RBX: 0000000000000001 RCX: ffffffffb46599c6
+RDX: 0000000000000000 RSI: ffff888004b12880 RDI: 0000000000000040
+RBP: 0000000000000040 R08: ffff888006f46500 R09: ffffed100096250b
+R10: ffff888004b12857 R11: ffffed100096250a R12: ffff888004b12880
+R13: 0000000000000000 R14: ffff888004b12850 R15: ffff888004b12930
+FS:  0000000000000000(0000) GS:ffff88806cf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fdee85e4bb0 CR3: 0000000021e7c005 CR4: 0000000000370ee0
+Call Trace:
+ <IRQ>
+ kblockd_mod_delayed_work_on+0x12/0x30
+ __blk_mq_delay_run_hw_queue+0x328/0x540
+ blk_mq_run_hw_queue+0x16c/0x2f0
+ blk_mq_run_hw_queues+0x10d/0x1a0
+ scsi_run_queue_async+0x199/0x1e0
+ scsi_end_request+0x339/0x730
+ scsi_io_completion+0x192/0x1070
+ scsi_softirq_done+0x117/0x250
+ blk_done_softirq+0x22f/0x390
+ __do_softirq+0x1b8/0x7ca
+ asm_call_irq_on_stack+0xf/0x20
+ </IRQ>
+ do_softirq_own_stack+0x80/0xa0
+ irq_exit_rcu+0x125/0x150
+ sysvec_call_function_single+0x43/0xa0
+ asm_sysvec_call_function_single+0x12/0x20
+RIP: 0010:check_memory_region+0x13/0x1e0
+Code: c3 a0 92 00 0f 1f 00 48 89 f2 be f8 00 00 00 e9 b3 a0 92 00 0f 1f 00 48 85 f6 0f 84 81 01 00 00 49 89 fa 41 54 0f b6 d2 55 53 <49> 01 f2 0f 82 5b 01 00 00 e9 b6 00 00 00 48 b8 00 00 00 00 00 00
+RSP: 0018:ffff888007247708 EFLAGS: 00000202
+RAX: ffff888006f46500 RBX: 8000000015c5e007 RCX: ffffffffb3de0463
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff888006f46500
+RBP: ffffea0000a56640 R08: ffff888006f46500 R09: fffff9400014accf
+R10: ffff888006f46500 R11: fffff9400014acce R12: 8000000015c5e027
+R13: ffffea0000a56670 R14: 00007f7f03800000 R15: dffffc0000000000
+ unmap_page_range+0x953/0x1f30
+ unmap_single_vma+0x198/0x300
+ unmap_vmas+0x16d/0x2f0
+ exit_mmap+0x278/0x4e0
+ mmput+0xce/0x3a0
+ do_exit+0xa57/0x2ab0
+ do_group_exit+0x125/0x340
+ get_signal+0x46a/0x2270
+ arch_do_signal+0x88/0x1b80
+ exit_to_user_mode_prepare+0x105/0x170
+ syscall_exit_to_user_mode+0x38/0x220
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7f7f0456027a
+Code: Unable to access opcode bytes at RIP 0x7f7f04560250.
+RSP: 002b:00007ffca01dbd68 EFLAGS: 00000246 ORIG_RAX: 000000000000003d
+RAX: fffffffffffffe00 RBX: 0000000000001e63 RCX: 00007f7f0456027a
+RDX: 0000000040000000 RSI: 00007ffca01dbd74 RDI: 00000000ffffffff
+RBP: 00007ffca01dbd74 R08: 0000000000000000 R09: 0000000000000016
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffca01dbe40
+R13: 00000000ffffffff R14: 0000000000000006 R15: 0000000000000006
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0 skipped: idling at default_idle+0xe/0x10

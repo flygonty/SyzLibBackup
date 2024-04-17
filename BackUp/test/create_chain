@@ -1,0 +1,11 @@
+r0 = syz_mnl_nlmsg_batch_start()
+r1 = syz_nftnl_chain_alloc()
+r2 = 0
+syz_nftnl_chain_set_u32(r1, NFTNL_CHAIN_FAMILY, NFPROTO_INET)
+syz_nftnl_chain_set_str(r1, NFTNL_CHAIN_TABLE, "table_name")
+syz_nftnl_chain_set_str(r1, NFTNL_CHAIN_NAME, "chain_name")
+r4 = syz_mnl_nlmsg_batch_current(r0)
+r5 = syz_nftnl_table_nlmsg_build_hdr(r4, NFT_MSG_NEWTABLE, NFPROTO_INET, NLM_F_CREATE | NLM_F_ACK, r2)
+syz_nftnl_set_nlmsg_build_payload(r5, r4)
+syz_mnl_nlmsg_batch_next(r4)
+syz_nftnl_chain_free(r1)
