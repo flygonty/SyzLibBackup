@@ -38,13 +38,6 @@ sendmsg$NFT_MSG_GETFLOWTABLE(fd sock_nl_netfilter, msg ptr[in, msghdr_nf_tables[
 
 sendmsg$NFT_BATCH(fd sock_nl_netfilter, msg ptr[in, msghdr_netlink[nft_batch_msg]], f flags[send_flags])
 
-# nftnl_table_flags = NFTNL_TABLE_NAME, NFTNL_TABLE_FAMILY, NFTNL_TABLE_FLAGS, NFTNL_TABLE_USE, NFTNL_TABLE_HANDLE, NFTNL_TABLE_USERDATA, NFTNL_TABLE_OWNER, __NFTNL_TABLE_MAX
-nftnl_new_table = NFT_MSG_NEWTABLE
-nftnl_chain = NFT_MSG_NEWCHAIN
-nftnl_set = NFT_MSG_NEWSET
-nftnl_create_tag = 1028
-family = NFPROTO_INET
-
 resource mnl_sock[int32]
 resource mnl_nlmsg_batch[int32]
 #resource mnl_nlmsg_batch_void_ptr[int32]
@@ -72,14 +65,14 @@ syz_nftnl_table_alloc() nftnl_table
 syz_nftnl_table_free(t nftnl_table)
 syz_nftnl_table_set_str(t nftnl_table, attr int16, str ptr[in, string])
 syz_nftnl_table_set_u32(t nftnl_table, attr int16, val int32)
-syz_nftnl_table_nlmsg_build_hdr(b mnl_nlmsg_batch, type flags[nftnl_new_table], f flags[family], seq flags[nftnl_create_tag], res_id int16) nlmsghdr
+syz_nftnl_table_nlmsg_build_hdr(b mnl_nlmsg_batch, type int32, f int32, seq int32, res_id int16) nlmsghdr
 syz_nftnl_set_alloc() nftnl_set
 syz_nftnl_set_set_str(s nftnl_set, addr int16, str ptr[in, string])
 syz_nftnl_set_set_u32(s nftnl_set, addr int16, val int32)
 syz_nftnl_batch_begin(buf_ptr buf, seq int32)
 syz_nftnl_table_nlmsg_build_payload(nlh nlmsghdr, t nftnl_table)
 syz_nftnl_set_nlmsg_build_payload(nlh nlmsghdr, s nftnl_set)
-syz_nftnl_set_set_data(s nftnl_set, attr int16, data_ptr int32, len int32)
+syz_nftnl_set_set_data(s nftnl_set, attr int16, data_ptr ptr[in, array[int8]], len int32)
 syz_nftnl_set_free(s nftnl_set)
 syz_nftnl_batch_end(buf_ptr buf, seq int32) nlmsghdr
 syz_nftnl_expr_alloc(name ptr[in, string]) nftnl_expr
@@ -121,9 +114,11 @@ syz_create_lookup_rule(batch_ptr mnl_nlmsg_batch, seq int32, table_name_ptr ptr[
 syz_create_faulty_lookup_rule(batch_ptr mnl_nlmsg_batch, seq int32, table_name_ptr ptr[in, string], chain_name_ptr ptr[in, string], set_name_ptr ptr[in, string], set_id int32)
 syz_mnl_nlmsg_batch_stop(batch_ptr mnl_nlmsg_batch)
 syz_poc()
-syz_nftnl_chain_nlmsg_build_hdr(b mnl_nlmsg_batch, type flags[nftnl_chain], f flags[family], seq flags[nftnl_create_tag], res_id int16) nlmsghdr
-syz_nftnl_set_nlmsg_build_hdr(b mnl_nlmsg_batch, type flags[nftnl_set], f flags[family], seq flags[nftnl_create_tag], res_id int16) nlmsghdr
+syz_nftnl_chain_nlmsg_build_hdr(b mnl_nlmsg_batch, type int32, f int32, seq int32, res_id int16) nlmsghdr
+syz_nftnl_set_nlmsg_build_hdr(b mnl_nlmsg_batch, type int32, f int32, seq int32, res_id int16) nlmsghdr
 syz_nftnl_chain_nlmsg_build_payload(nlh nlmsghdr, c nftnl_chain)
+syz_nftnl_rule_add_expr(r nftnl_rule, e nftnl_expr)
+syz_nftnl_rule_nlmsg_build_hdr(b mnl_nlmsg_batch, type int32, f int32, seq int32, res_id int16) nlmsghdr
 
 nft_batch_msg {
 	begin	nft_nlmsghdr[NFNL_MSG_BATCH_BEGIN]
