@@ -351,6 +351,9 @@ func isSupportedSyzkall(c *prog.Syscall, target *prog.Target, sandbox string) (b
 	if strings.HasPrefix(c.CallName, "syz_nftnl_") {
 		return true, ""
 	}
+	if strings.HasPrefix(c.CallName, "syz_") {
+		return true, ""
+	}
 	if isSupported, ok := syzkallSupport[c.CallName]; ok {
 		return isSupported(c, target, sandbox)
 	}

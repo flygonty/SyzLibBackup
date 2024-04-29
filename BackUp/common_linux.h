@@ -6835,3 +6835,23 @@ static long syz_nftnl_chain_nlmsg_build_payload(volatile long nlh_ptr, volatile 
 	return 0;
 }
 #endif
+
+#if SYZ_EXECUTOR || __NR_syz_nftnl_rule_add_expr
+#include <libnftnl/rule.h>
+static long syz_nftnl_rule_add_expr(volatile long rule_ptr, volatile long expr_ptr)
+{
+	struct nftnl_rule* r = (struct nftnl_rule*)(long)rule_ptr;
+	struct nftnl_expr* expr = (struct nftnl_expr*)(long)expr_ptr;
+	nftnl_rule_add_expr(r, expr);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_nftnl_rule_nlmsg_build_hdr
+#include <libnftnl/rule.h>
+static long syz_nftnl_rule_nlmsg_build_hdr(volatile long buf_ptr, volatile long type, volatile long family, volatile long flags, volatile long seq)
+{
+	char* buf = (char*)(long)buf_ptr;
+	return (long)nftnl_rule_nlmsg_build_hdr(buf, type, family, flags, seq);
+}
+#endif
