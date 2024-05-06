@@ -47,13 +47,14 @@ resource nlmsghdr[int32]
 resource nftnl_expr[int32]
 resource nftnl_chain[int32]
 resource nftnl_set_elem[int32]
+resource nftnl_obj[int32]
 resource nftnl_rule[int32]
 resource buf[int32]
 resource size[int32]
 resource ret_recv[int32]
 resource ret_portid[int32]
 
-syz_mnl_socket_open(bus int32) mnl_sock
+syz_mnl_socket_open() mnl_sock
 syz_mnl_socket_close(sock mnl_sock)
 syz_mnl_socket_sendto(sock mnl_sock, buf_ptr buf, len size)
 syz_mnl_nlmsg_batch_start(buf_ptr ptr[in, array[int8]], limit len[buf_ptr]) mnl_nlmsg_batch
@@ -119,6 +120,27 @@ syz_nftnl_set_nlmsg_build_hdr(b mnl_nlmsg_batch, type int32, f int32, seq int32,
 syz_nftnl_chain_nlmsg_build_payload(nlh nlmsghdr, c nftnl_chain)
 syz_nftnl_rule_add_expr(r nftnl_rule, e nftnl_expr)
 syz_nftnl_rule_nlmsg_build_hdr(b mnl_nlmsg_batch, type int32, f int32, seq int32, res_id int16) nlmsghdr
+syz_prepare_nftables(sock mnl_sock)
+syz_trigger_uaf(sock mnl_sock)
+syz_declare_mnl_batch_buffer()
+syz_set_table(table_name_ptr ptr[in, string]) nftnl_table
+syz_set_obj(table_name_ptr ptr[in, string], obj_name_ptr ptr[in, string]) nftnl_obj
+syz_set_set(table_name_ptr ptr[in, string], set_name_ptr ptr[in, string]) nftnl_set
+syz_set_elem(table_name_ptr ptr[in, string], obj_name_ptr ptr[in, string]) nftnl_set_elem
+syz_start_batch()
+syz_table_build_payload(t nftnl_table)
+syz_obj_build_payload(o nftnl_obj)
+syz_set_build_payload(s nftnl_set)
+syz_set_elem_build_payload(set nftnl_set)
+syz_batch_end()
+syz_open()
+syz_sendto()
+
+syz_nftnl_obj_alloc() nftnl_obj
+syz_nftnl_obj_set_str(obj nftnl_obj, attr int16, str ptr[in, string])
+syz_nftnl_obj_set_u32(obj nftnl_obj, attr int16, val int32)
+syz_nftnl_obj_set_u64(obj nftnl_obj, attr int16, val int32)
+
 
 nft_batch_msg {
 	begin	nft_nlmsghdr[NFNL_MSG_BATCH_BEGIN]
