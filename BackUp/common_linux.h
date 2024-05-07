@@ -5741,8 +5741,8 @@ static long syz_mnl_socket_close(volatile long mnl_sock)
 static long syz_mnl_socket_sendto(volatile long mnl_sock, volatile long buf_ptr, volatile long len_arg)
 {
 	struct mnl_socket* nl_sock = (struct mnl_socket*)(long)mnl_sock;
-	void* buf = (void*)(long)buf_ptr;
-	size_t len = (long)len_arg;
+	char* buf = (char*)(long)buf_ptr;
+	int len = (long)len_arg;
 	return (long)mnl_socket_sendto(nl_sock, buf, len);
 }
 
@@ -7162,5 +7162,39 @@ static long syz_nftnl_obj_set_u64(volatile long obj_ptr, volatile long attr, vol
 	struct nftnl_obj* obj = (struct nftnl_obj*)(long)obj_ptr;
 	nftnl_obj_set_u64(obj, attr, val);
 	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_nftnl_set_elem_set_str
+static long syz_nftnl_set_elem_set_str(volatile long set_elem_ptr, volatile long attr, volatile long str_ptr)
+{
+	struct nftnl_set_elem* set_elem = (struct nftnl_set_elem*)(long)set_elem_ptr;
+	char* str = (char*)(long)str_ptr;
+	return (long)nftnl_set_elem_set_str(set_elem, attr, str);
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_nftnl_nlmsg_build_hdr
+static long syz_nftnl_nlmsg_build_hdr(volatile long buf_ptr, volatile long type, volatile long family, volatile long flags, volatile long seq)
+{
+	char* buf = (char*)(long)buf_ptr;
+	return (long)nftnl_nlmsg_build_hdr(buf, type, family, flags, seq);
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_nftnl_obj_nlmsg_build_payload
+static long syz_nftnl_obj_nlmsg_build_payload(volatile long nlh_ptr, volatile long obj_ptr)
+{
+	struct nlmsghdr* nlh = (struct nlmsghdr*)(long)nlh_ptr;
+	struct nftnl_obj* obj = (struct nftnl_obj*)(long)obj_ptr;
+	nftnl_obj_nlmsg_build_payload(nlh, obj);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_declare_char_array
+static long syz_declare_char_array(volatile long len)
+{
+	char
 }
 #endif
