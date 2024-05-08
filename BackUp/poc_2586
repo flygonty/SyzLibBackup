@@ -63,7 +63,7 @@ r20 = syz_mnl_nlmsg_batch_head(r7)
 r21 = syz_mnl_nlmsg_batch_size(r7)
 syz_mnl_socket_sendto(r0, r20, r21)
 
-r22 = syz_mnl_nlmsg_batch_start(r29, 0x4000)
+r22 = syz_mnl_nlmsg_batch_start(&(0x7f0000000140), 0x4000)
 r23 = syz_mnl_nlmsg_batch_current(r22)
 syz_nftnl_batch_begin(r23, 0x8)
 syz_mnl_nlmsg_batch_next(r22)
