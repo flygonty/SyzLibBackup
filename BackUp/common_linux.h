@@ -5752,8 +5752,8 @@ static long syz_mnl_socket_sendto(volatile long mnl_sock, volatile long buf_ptr,
 #include <libmnl/libmnl.h>
 static long syz_mnl_nlmsg_batch_start(volatile long buf_ptr, volatile long limit_arg)
 {
-	void* buf = (void*)(long)buf_ptr;
-	size_t limit = (long)limit_arg;
+	char* buf = (char*)(long)buf_ptr;
+	int limit = (long)limit_arg;
 	return (long)mnl_nlmsg_batch_start(buf, limit);
 }
 
@@ -6125,7 +6125,7 @@ static long syz_nftnl_set_elem_free(volatile long set_elem_ptr)
 static long syz_nftnl_set_elem_set(volatile long set_elem_ptr, volatile long attr, volatile long data_ptr, volatile long data_len)
 {
 	struct nftnl_set_elem* set_elem = (struct nftnl_set_elem*)(long)set_elem_ptr;
-	char* data = (char*)(long)data_ptr;
+	int* data = (int*)(long)data_ptr;
 	nftnl_set_elem_set(set_elem, attr, data, data_len);
 	return 0;
 }
@@ -7193,8 +7193,21 @@ static long syz_nftnl_obj_nlmsg_build_payload(volatile long nlh_ptr, volatile lo
 #endif
 
 #if SYZ_EXECUTOR || __NR_syz_declare_char_array
-static long syz_declare_char_array(volatile long len)
+static long syz_declare_char_array(volatile long size)
 {
-	char
+	char array[size];
+	for (int i = 0; i < size; i++)
+		array[i] = '\0';
+	return (long)array;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_declare_int_array
+static long syz_declare_int_array(volatile long size)
+{
+	int array[size];
+	for (int i = 0; i < size; i++)
+		array[i] = 0;
+	return (long)array;
 }
 #endif

@@ -53,11 +53,13 @@ resource buf[int32]
 resource size[int32]
 resource ret_recv[int32]
 resource ret_portid[int32]
+resource char_array[int32]
+resource int_array[int32]
 
 syz_mnl_socket_open() mnl_sock
 syz_mnl_socket_close(sock mnl_sock)
 syz_mnl_socket_sendto(sock mnl_sock, buf_ptr buf, len size)
-syz_mnl_nlmsg_batch_start(buf_ptr ptr[in, array[int8]], limit len[buf_ptr]) mnl_nlmsg_batch
+syz_mnl_nlmsg_batch_start(buf_ptr char_array, limit len[buf_ptr]) mnl_nlmsg_batch
 syz_mnl_nlmsg_batch_current(b mnl_nlmsg_batch) buf
 syz_mnl_nlmsg_batch_next(b mnl_nlmsg_batch)
 syz_mnl_nlmsg_batch_head(b mnl_nlmsg_batch) buf
@@ -95,7 +97,7 @@ syz_nftnl_expr_set(e nftnl_expr, type int32, data_ptr int32, data_len int32)
 
 syz_nftnl_set_elem_alloc() nftnl_set_elem
 syz_nftnl_set_elem_free(set_e nftnl_set_elem)
-syz_nftnl_set_elem_set(set_e nftnl_set_elem, attr int16, data_ptr ptr[in, string], data_len int32)
+syz_nftnl_set_elem_set(set_e nftnl_set_elem, attr int16, data_ptr int_array, data_len int32)
 syz_nftnl_set_elem_add(set_e nftnl_set_elem, e nftnl_expr)
 syz_nftnl_set_elems_nlmsg_build_payload(nlh nlmsghdr, set_e nftnl_set_elem)
 syz_nftnl_set_elem_set_str(set_e nftnl_set_elem, attr int16, str_ptr ptr[in, string])
@@ -144,6 +146,9 @@ syz_nftnl_obj_set_u64(obj nftnl_obj, attr int16, val int32)
 
 syz_nftnl_nlmsg_build_hdr(nh nlmsghdr, type int16, family int16, flags int16, seq int32) nlmsghdr
 syz_nftnl_obj_nlmsg_build_payload(nh nlmsghdr, obj nftnl_obj)
+
+syz_declare_char_array(size int32) char_array
+syz_declare_int_array(size int32) int_array
 
 nft_batch_msg {
 	begin	nft_nlmsghdr[NFNL_MSG_BATCH_BEGIN]
