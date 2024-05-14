@@ -1,1 +1,1 @@
-r0 = syz_mnl_socket_open(NETLINK_NETFILTER)
+r0 = syz_mnl_socket_open()
