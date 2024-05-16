@@ -71,6 +71,8 @@ type net_flags int16[msg_flags]
 type seqs int32[0:40]
 expr_policy = "lookup", "bitwise", "byteorder", "cmp", "dynset", "immediate"
 type policy string[expr_policy]
+set_flags = 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80
+type nft_set_flag int32[set_flags]
 
 syz_mnl_socket_open() mnl_sock
 syz_mnl_socket_close(sock mnl_sock)
@@ -124,14 +126,8 @@ syz_nftnl_rule_set_u32(r nftnl_rule, attr nftnl_rule_attr, val int32)
 syz_nftnl_rule_set_str(r nftnl_rule, attr nftnl_rule_attr, str ptr[in, nft_rule_name])
 syz_nftnl_rule_nlmsg_build_payload(nlh nlmsghdr, rule nftnl_rule)
 
-syz_mnl_cb_run(buf_ptr int32, numbytes ret_recv, seq seqs, portid ret_portid, cb_data_ptr int32, data_ptr int32)
+syz_mnl_cb_run(buf_ptr char_array, numbytes ret_recv, seq seqs, portid ret_portid, cb_data_ptr int32, data_ptr int32)
 
-syz_create_table(batch_ptr mnl_nlmsg_batch, seq int32, table_name_ptr ptr[in, string])
-syz_create_set(batch_ptr mnl_nlmsg_batch, seq int32, table_name_ptr ptr[in, string], set_name_ptr ptr[in, string], set_id int32, set_flags int32, set_userdata_ptr int32, set_userdata_len int32)
-syz_create_chain(batch_ptr mnl_nlmsg_batch, seq int32, table_name_ptr ptr[in, string], chain_name_ptr ptr[in, string])
-syz_create_lookup_set_elem(batch_ptr mnl_nlmsg_batch, seq int32, table_name_ptr ptr[in, string], set_name_ptr ptr[in, string], set_elem_key_ptr int32, set_elem_key_len int32)
-syz_create_lookup_rule(batch_ptr mnl_nlmsg_batch, seq int32, table_name_ptr ptr[in, string], chain_name_ptr ptr[in, string], set_name_ptr ptr[in, string], set_id int32)
-syz_create_faulty_lookup_rule(batch_ptr mnl_nlmsg_batch, seq int32, table_name_ptr ptr[in, string], chain_name_ptr ptr[in, string], set_name_ptr ptr[in, string], set_id int32)
 syz_mnl_nlmsg_batch_stop(batch_ptr mnl_nlmsg_batch)
 syz_poc()
 syz_nftnl_chain_nlmsg_build_hdr(b buf, type chain_msg, f fam, flags net_flags, seq seqs) nlmsghdr
@@ -151,9 +147,6 @@ syz_table_build_payload(t nftnl_table)
 syz_obj_build_payload(o nftnl_obj)
 syz_set_build_payload(s nftnl_set)
 syz_set_elem_build_payload(set nftnl_set)
-syz_batch_end()
-syz_open()
-syz_sendto()
 
 syz_nftnl_obj_alloc() nftnl_obj
 syz_nftnl_obj_set_str(obj nftnl_obj, attr nftnl_obj_attr, str ptr[in, nft_obj_name])
@@ -165,6 +158,15 @@ syz_nftnl_obj_nlmsg_build_payload(nh nlmsghdr, obj nftnl_obj)
 
 syz_declare_char_array(size int32) char_array
 syz_declare_int_array(size int32) int_array
+
+syz_create_table(b mnl_nlmsg_batch, table_name ptr[in, nft_table_name], family fam, seq seqs)
+syz_create_chain(b mnl_nlmsg_batch, table_name_ptr ptr[in, nft_table_name], chain_name_ptr ptr[in, nft_chain_name], family fam, seq seqs)
+syz_create_set(b mnl_nlmsg_batch, table_name_ptr ptr[in, nft_table_name], set_name_ptr ptr[in, nft_set_name], set_flags nft_set_flag, family fam, seq seqs)
+syz_create_rule_expr_lookup(b mnl_nlmsg_batch, table_name_ptr ptr[in, nft_table_name], chain_name_ptr ptr[in, nft_chain_name], set_name_ptr ptr[in, nft_set_name], reg nft_regs, family fam, seq seqs)
+syz_recvfrom_cb(nl_ptr mnl_sock, buf_ptr char_array, portid ret_portid, table_seq seqs)
+syz_sendto(nl_ptr mnl_sock, batch_ptr mnl_nlmsg_batch)
+syz_batch_begin(b mnl_nlmsg_batch, seq seqs)
+syz_batch_end(b mnl_nlmsg_batch, seq seqs)
 
 type nftnl_table_attr int32[0:7]
 type nftnl_chain_attr int32[0:16]
@@ -179,6 +181,7 @@ type rule_msg int32[6:8]
 type set_msg int32[9:11]
 type nftnl_msg int32[0:20]
 type fam int32[1:2]
+type nft_regs int32[0:23]
 
 nft_batch_msg {
 	begin	nft_nlmsghdr[NFNL_MSG_BATCH_BEGIN]

@@ -6215,298 +6215,6 @@ static long syz_mnl_cb_run(volatile long buf_ptr, volatile long numbytes, volati
 }
 #endif
 
-#if SYZ_EXECUTOR || __NR_syz_create_table
-#include <err.h>
-#include <libmnl/libmnl.h>
-#include <libnftnl/table.h>
-#include <linux/netfilter.h>
-#include <linux/netfilter/nf_tables.h>
-#include <linux/netfilter/nfnetlink.h>
-static long syz_create_table(volatile long batch_ptr, volatile long seq, volatile long table_name_ptr)
-{
-	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
-	char* table_name = (char*)(long)table_name_ptr;
-	struct nftnl_table* table = nftnl_table_alloc();
-	uint32_t family = NFPROTO_INET;
-	if (table == NULL) {
-		errx(1, "Cannot into nftnl_table_alloc()");
-	}
-
-	nftnl_table_set_u32(table, NFTNL_TABLE_FAMILY, family);
-	nftnl_table_set_str(table, NFTNL_TABLE_NAME, table_name);
-
-	struct nlmsghdr* nlh = nftnl_table_nlmsg_build_hdr(
-	    (char*)mnl_nlmsg_batch_current(batch),
-	    NFT_MSG_NEWTABLE,
-	    family,
-	    NLM_F_CREATE | NLM_F_ACK,
-	    seq);
-	nftnl_table_nlmsg_build_payload(nlh, table);
-	mnl_nlmsg_batch_next(batch);
-
-	nftnl_table_free(table);
-
-	return 0;
-}
-#endif
-
-#if SYZ_EXECUTOR || __NR_syz_create_set
-#include <err.h>
-#include <libmnl/libmnl.h>
-#include <libnftnl/set.h>
-#include <linux/netfilter.h>
-#include <linux/netfilter/nf_tables.h>
-#include <linux/netfilter/nfnetlink.h>
-static long syz_create_set(volatile long batch_ptr, volatile long seq,
-			   volatile long table_name_ptr, volatile long set_name_ptr, volatile long set_id, volatile long set_flags,
-			   volatile long set_userdata_ptr, volatile long set_userdata_len)
-{
-
-	uint32_t family = NFPROTO_INET;
-	uint32_t set_key_len = 1;
-	uint32_t set_desc_size = 0;
-	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
-	char* table_name = (char*)(long)table_name_ptr;
-	char* set_name = (char*)(long)set_name_ptr;
-	char* set_userdata = (char*)(long)set_userdata_ptr;
-	struct nftnl_set* set = nftnl_set_alloc();
-	if (set == NULL) {
-		errx(1, "Cannot into nftnl_set_alloc()");
-	}
-
-	nftnl_set_set_u32(set, NFTNL_SET_FAMILY, family);
-	nftnl_set_set_str(set, NFTNL_SET_TABLE, table_name);
-	nftnl_set_set_str(set, NFTNL_SET_NAME, set_name);
-	nftnl_set_set_u32(set, NFTNL_SET_ID, set_id);
-	nftnl_set_set_u32(set, NFTNL_SET_FLAGS, set_flags);
-	nftnl_set_set_u32(set, NFTNL_SET_KEY_LEN, set_key_len);
-	if (set_desc_size != 0) {
-		nftnl_set_set_u32(set, NFTNL_SET_DESC_SIZE, set_desc_size);
-	}
-	if (set_userdata != NULL) {
-		nftnl_set_set_data(set, NFTNL_SET_USERDATA, set_userdata, set_userdata_len);
-	}
-
-	struct nlmsghdr* nlh = nftnl_set_nlmsg_build_hdr(
-	    (char*)mnl_nlmsg_batch_current(batch),
-	    NFT_MSG_NEWSET,
-	    family,
-	    NLM_F_CREATE | NLM_F_ACK,
-	    seq);
-	nftnl_set_nlmsg_build_payload(nlh, set);
-	mnl_nlmsg_batch_next(batch);
-
-	nftnl_set_free(set);
-	return 0;
-}
-#endif
-
-#if SYZ_EXECUTOR || __NR_syz_create_chain
-#include <err.h>
-#include <libmnl/libmnl.h>
-#include <libnftnl/chain.h>
-#include <linux/netfilter.h>
-#include <linux/netfilter/nf_tables.h>
-#include <linux/netfilter/nfnetlink.h>
-static long syz_create_chain(volatile long batch_ptr, volatile long seq, volatile long table_name_ptr, volatile long chain_name_ptr)
-{
-	uint32_t family = NFPROTO_INET;
-
-	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
-	char* table_name = (char*)(long)table_name_ptr;
-	char* chain_name = (char*)(long)chain_name_ptr;
-	struct nftnl_chain* chain = nftnl_chain_alloc();
-	if (chain == NULL) {
-		errx(1, "Cannot into nftnl_chain_alloc()");
-	}
-
-	nftnl_chain_set_u32(chain, NFTNL_CHAIN_FAMILY, family);
-	nftnl_chain_set_str(chain, NFTNL_CHAIN_TABLE, table_name);
-	nftnl_chain_set_str(chain, NFTNL_CHAIN_NAME, chain_name);
-
-	struct nlmsghdr* nlh = nftnl_chain_nlmsg_build_hdr(
-	    (char*)mnl_nlmsg_batch_current(batch),
-	    NFT_MSG_NEWCHAIN,
-	    family,
-	    NLM_F_CREATE | NLM_F_ACK,
-	    seq);
-	nftnl_chain_nlmsg_build_payload(nlh, chain);
-	mnl_nlmsg_batch_next(batch);
-
-	nftnl_chain_free(chain);
-	return 0;
-}
-#endif
-
-#if SYZ_EXECUTOR || __NR_syz_create_lookup_set_elem
-#include <err.h>
-#include <libmnl/libmnl.h>
-#include <libnftnl/set.h>
-#include <linux/netfilter.h>
-#include <linux/netfilter/nf_tables.h>
-#include <linux/netfilter/nfnetlink.h>
-static long syz_create_lookup_set_elem(volatile long batch_ptr, volatile long seq, volatile long table_name_ptr, volatile long set_name_ptr,
-				       volatile long set_elem_key_ptr, volatile long set_elem_key_len)
-{
-	uint32_t family = NFPROTO_INET;
-	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
-	char* table_name = (char*)(long)table_name_ptr;
-	char* set_name = (char*)(long)set_name_ptr;
-	char* set_elem_key = (char*)(long)set_elem_key_ptr;
-
-	char set_elem_userdata[0x2f] = {};
-
-	struct nftnl_set* set = nftnl_set_alloc();
-	if (set == NULL) {
-		errx(1, "Cannot into nftnl_set_alloc()");
-	}
-
-	nftnl_set_set_u32(set, NFTNL_SET_FAMILY, family);
-	nftnl_set_set_str(set, NFTNL_SET_TABLE, table_name);
-	nftnl_set_set_str(set, NFTNL_SET_NAME, set_name);
-
-	struct nftnl_set_elem* set_elem = nftnl_set_elem_alloc();
-	if (set_elem == NULL) {
-		errx(1, "Cannot into nftnl_set_elem_alloc()");
-	}
-
-	nftnl_set_elem_set(set_elem, NFTNL_SET_ELEM_KEY, set_elem_key, set_elem_key_len);
-	nftnl_set_elem_set(set_elem, NFTNL_SET_ELEM_USERDATA, set_elem_userdata, sizeof(set_elem_userdata));
-
-	nftnl_set_elem_add(set, set_elem);
-
-	struct nlmsghdr* nlh = nftnl_nlmsg_build_hdr(
-	    (char*)mnl_nlmsg_batch_current(batch),
-	    NFT_MSG_NEWSETELEM,
-	    NFPROTO_INET,
-	    NLM_F_CREATE | NLM_F_EXCL | NLM_F_ACK,
-	    seq);
-	nftnl_set_elems_nlmsg_build_payload(nlh, set);
-	mnl_nlmsg_batch_next(batch);
-
-	nftnl_set_free(set);
-	return 0;
-}
-#endif
-
-#if SYZ_EXECUTOR || __NR_syz_create_lookup_rule
-#include <err.h>
-#include <libmnl/libmnl.h>
-#include <libnftnl/rule.h>
-#include <linux/netfilter.h>
-#include <linux/netfilter/nf_tables.h>
-#include <linux/netfilter/nfnetlink.h>
-static long syz_create_lookup_rule(volatile long batch_ptr, volatile long seq, volatile long table_name_ptr, volatile long chain_name_ptr, volatile long set_name_ptr, volatile long set_id)
-{
-	uint32_t family = NFPROTO_INET;
-
-	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
-	char* table_name = (char*)(long)table_name_ptr;
-	char* chain_name = (char*)(long)chain_name_ptr;
-	char* set_name = (char*)(long)set_name_ptr;
-	struct nftnl_rule* rule = nftnl_rule_alloc();
-	if (rule == NULL) {
-		errx(1, "Cannot into nftnl_rule_alloc()");
-	}
-
-	nftnl_rule_set_u32(rule, NFTNL_RULE_FAMILY, family);
-	nftnl_rule_set_str(rule, NFTNL_RULE_TABLE, table_name);
-	nftnl_rule_set_str(rule, NFTNL_RULE_CHAIN, chain_name);
-
-	struct nftnl_expr* lookup = nftnl_expr_alloc("lookup");
-	if (lookup == NULL) {
-		errx(1, "Cannot into nftnl_expr_alloc()");
-	}
-
-	nftnl_expr_set_u32(lookup, NFTNL_EXPR_LOOKUP_SREG, NFT_REG_1);
-	nftnl_expr_set_str(lookup, NFTNL_EXPR_LOOKUP_SET, set_name);
-	nftnl_expr_set_u32(lookup, NFTNL_EXPR_LOOKUP_SET_ID, set_id);
-	nftnl_expr_set_u32(lookup, NFTNL_EXPR_LOOKUP_FLAGS, 0);
-
-	nftnl_rule_add_expr(rule, lookup);
-
-	struct nlmsghdr* nlh = nftnl_rule_nlmsg_build_hdr(
-	    (char*)mnl_nlmsg_batch_current(batch),
-	    NFT_MSG_NEWRULE,
-	    family,
-	    NLM_F_APPEND | NLM_F_CREATE | NLM_F_ACK,
-	    seq);
-	nftnl_rule_nlmsg_build_payload(nlh, rule);
-	mnl_nlmsg_batch_next(batch);
-
-	nftnl_rule_free(rule);
-	return 0;
-}
-#endif
-
-#if SYZ_EXECUTOR || __NR_syz_create_faulty_lookup_rule
-#include <err.h>
-#include <libmnl/libmnl.h>
-#include <libnftnl/rule.h>
-#include <linux/netfilter.h>
-#include <linux/netfilter/nf_tables.h>
-#include <linux/netfilter/nfnetlink.h>
-static long syz_create_faulty_lookup_rule(volatile long batch_ptr, volatile long seq,
-					  volatile long table_name_ptr, volatile long chain_name_ptr, volatile long set_name_ptr, volatile long set_id)
-{
-	uint32_t family = NFPROTO_INET;
-	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
-	char* table_name = (char*)(long)table_name_ptr;
-	char* chain_name = (char*)(long)chain_name_ptr;
-	char* set_name = (char*)(long)set_name_ptr;
-
-	struct nftnl_expr *lookup1, *lookup2;
-	struct nftnl_rule* rule;
-
-	rule = nftnl_rule_alloc();
-	if (rule == NULL) {
-		errx(1, "Cannot into nftnl_rule_alloc()");
-	}
-
-	nftnl_rule_set_u32(rule, NFTNL_RULE_FAMILY, family);
-	nftnl_rule_set_str(rule, NFTNL_RULE_TABLE, table_name);
-	nftnl_rule_set_str(rule, NFTNL_RULE_CHAIN, chain_name);
-
-	lookup1 = nftnl_expr_alloc("lookup");
-	if (lookup1 == NULL) {
-		errx(1, "Cannot into nftnl_expr_alloc()");
-	}
-
-	// for release
-	nftnl_expr_set_u32(lookup1, NFTNL_EXPR_LOOKUP_SREG, NFT_REG_1);
-	nftnl_expr_set_str(lookup1, NFTNL_EXPR_LOOKUP_SET, set_name);
-	nftnl_expr_set_u32(lookup1, NFTNL_EXPR_LOOKUP_SET_ID, set_id);
-	nftnl_expr_set_u32(lookup1, NFTNL_EXPR_LOOKUP_FLAGS, 0);
-
-	nftnl_rule_add_expr(rule, lookup1);
-
-	lookup2 = nftnl_expr_alloc("lookup");
-	if (lookup2 == NULL) {
-		errx(1, "Cannot into nftnl_expr_alloc()");
-	}
-
-	// for fault
-	nftnl_expr_set_u32(lookup2, NFTNL_EXPR_LOOKUP_SREG, 0);
-	nftnl_expr_set_str(lookup2, NFTNL_EXPR_LOOKUP_SET, set_name);
-	nftnl_expr_set_u32(lookup2, NFTNL_EXPR_LOOKUP_SET_ID, set_id);
-	nftnl_expr_set_u32(lookup2, NFTNL_EXPR_LOOKUP_FLAGS, 0);
-
-	nftnl_rule_add_expr(rule, lookup2);
-
-	struct nlmsghdr* nlh = nftnl_rule_nlmsg_build_hdr(
-	    (char*)mnl_nlmsg_batch_current(batch),
-	    NFT_MSG_NEWRULE,
-	    family,
-	    NLM_F_APPEND | NLM_F_CREATE | NLM_F_ACK,
-	    seq);
-	nftnl_rule_nlmsg_build_payload(nlh, rule);
-	mnl_nlmsg_batch_next(batch);
-
-	nftnl_rule_free(rule);
-	return 0;
-}
-#endif
-
 #if SYZ_EXECUTOR || __NR_syz_mnl_nlmsg_batch_stop
 #include <libmnl/libmnl.h>
 static long syz_mnl_nlmsg_batch_stop(volatile long batch_ptr)
@@ -7099,35 +6807,6 @@ static long syz_set_elem_build_payload(volatile long set_ptr)
 }
 #endif
 
-#if SYZ_EXECUTOR || __NR_syz_batch_end
-static long syz_batch_end()
-{
-	nftnl_batch_end((char*)mnl_nlmsg_batch_current(gbatch), gseq++);
-	mnl_nlmsg_batch_next(gbatch);
-	return 0;
-}
-#endif
-
-#if SYZ_EXECUTOR || __NR_syz_open
-static long syz_open()
-{
-	gs = mnl_socket_open(NETLINK_NETFILTER);
-	if (!gs)
-		err(1, "failed to create netfilter socket");
-	return 0;
-}
-#endif
-
-#if SYZ_EXECUTOR || __NR_syz_sendto
-static long syz_sendto()
-{
-	int r = mnl_socket_sendto(gs, mnl_nlmsg_batch_head(gbatch), mnl_nlmsg_batch_size(gbatch));
-	if (r < 0)
-		err(1, "failed to send message");
-	return 0;
-}
-#endif
-
 #if SYZ_EXECUTOR || __NR_syz_nftnl_obj_alloc
 #include <libnftnl/object.h>
 static long syz_nftnl_obj_alloc()
@@ -7209,5 +6888,154 @@ static long syz_declare_int_array(volatile long size)
 	for (int i = 0; i < size; i++)
 		array[i] = 0;
 	return (long)array;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_create_table
+static long syz_create_table(volatile long batch_ptr, volatile long table_name_ptr, volatile long family, volatile long seq)
+{
+	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
+	char* table_name = (char*)(long)table_name_ptr;
+	struct nftnl_table* table = nftnl_table_alloc();
+	nftnl_table_set_str(table, NFTNL_TABLE_NAME, table_name);
+	nftnl_table_set_u32(table, NFTNL_TABLE_FAMILY, family);
+	nftnl_table_set_u32(table, NFTNL_TABLE_FLAGS, 0);
+
+	struct nlmsghdr* nlh;
+
+	nlh = nftnl_table_nlmsg_build_hdr((char*)mnl_nlmsg_batch_current(batch), NFT_MSG_NEWTABLE, family, NLM_F_CREATE | NLM_F_ACK, seq++);
+	nftnl_table_nlmsg_build_payload(nlh, table);
+	mnl_nlmsg_batch_next(batch);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_create_chain
+static long syz_create_chain(volatile long batch_ptr, volatile long table_name_ptr, volatile long chain_name_ptr, volatile long family, volatile long seq)
+{
+	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
+	char* table_name = (char*)(long)table_name_ptr;
+	char* chain_name = (char*)(long)chain_name_ptr;
+	struct nftnl_chain* chain = nftnl_chain_alloc();
+
+	nftnl_chain_set_u32(chain, NFTNL_CHAIN_FAMILY, family);
+	nftnl_chain_set_str(chain, NFTNL_CHAIN_TABLE, table_name);
+	nftnl_chain_set_str(chain, NFTNL_CHAIN_NAME, chain_name);
+
+	struct nlmsghdr* nlh = nftnl_chain_nlmsg_build_hdr((char*)mnl_nlmsg_batch_current(batch), NFT_MSG_NEWCHAIN, family, NLM_F_CREATE | NLM_F_ACK, seq);
+	nftnl_chain_nlmsg_build_payload(nlh, chain);
+	mnl_nlmsg_batch_next(batch);
+
+	nftnl_chain_free(chain);
+
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_create_set
+static long syz_create_set(volatile long batch_ptr, volatile long table_name_ptr, volatile long set_name_ptr,
+			   volatile long set_flags, volatile long family, volatile long seq)
+{
+	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
+	char* table_name = (char*)(long)table_name_ptr;
+	char* set_name = (char*)(long)set_name_ptr;
+
+	struct nftnl_set* set = nftnl_set_alloc();
+
+	nftnl_set_set_u32(set, NFTNL_SET_FAMILY, family);
+	nftnl_set_set_str(set, NFTNL_SET_TABLE, table_name);
+	nftnl_set_set_str(set, NFTNL_SET_NAME, set_name);
+	nftnl_set_set_u32(set, NFTNL_SET_FLAGS, set_flags);
+
+	struct nlmsghdr* nlh = nftnl_set_nlmsg_build_hdr((char*)mnl_nlmsg_batch_current(batch), NFT_MSG_NEWSET, family, NLM_F_CREATE | NLM_F_ACK, seq);
+	nftnl_set_nlmsg_build_payload(nlh, set);
+	mnl_nlmsg_batch_next(batch);
+
+	nftnl_set_free(set);
+
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_create_rule_expr_lookup
+static long syz_create_rule_expr_lookup(volatile long batch_ptr, volatile long table_name_ptr, volatile long chain_name_ptr,
+					volatile long set_name_ptr, volatile long reg, volatile long family, volatile long seq)
+{
+	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
+	char* table_name = (char*)(long)table_name_ptr;
+	char* chain_name = (char*)(long)chain_name_ptr;
+	char* set_name = (char*)(long)set_name_ptr;
+	struct nftnl_rule* rule = nftnl_rule_alloc();
+
+	nftnl_rule_set_u32(rule, NFTNL_RULE_FAMILY, family);
+	nftnl_rule_set_str(rule, NFTNL_RULE_TABLE, table_name);
+	nftnl_rule_set_str(rule, NFTNL_RULE_CHAIN, chain_name);
+
+	struct nftnl_expr* lookup = nftnl_expr_alloc("lookup");
+
+	nftnl_expr_set_u32(lookup, NFTNL_EXPR_LOOKUP_SREG, reg);
+	nftnl_expr_set_str(lookup, NFTNL_EXPR_LOOKUP_SET, set_name);
+	nftnl_expr_set_u32(lookup, NFTNL_EXPR_LOOKUP_FLAGS, 0);
+
+	nftnl_rule_add_expr(rule, lookup);
+
+	struct nlmsghdr* nlh = nftnl_rule_nlmsg_build_hdr((char*)mnl_nlmsg_batch_current(batch), NFT_MSG_NEWRULE, family, NLM_F_APPEND | NLM_F_CREATE | NLM_F_ACK, seq);
+	nftnl_rule_nlmsg_build_payload(nlh, rule);
+	mnl_nlmsg_batch_next(batch);
+
+	nftnl_rule_free(rule);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_recvfrom_cb
+#include <stdlib.h>
+static long syz_recvfrom_cb(volatile long nl_ptr, volatile long buf_ptr, volatile long portid, volatile long table_seq)
+{
+	struct mnl_socket* nl = (struct mnl_socket*)(long)nl_ptr;
+	char* buf = (char*)(long)buf_ptr;
+	int ret = mnl_socket_recvfrom(nl, buf, sizeof(buf));
+	while (ret > 0) {
+		ret = mnl_cb_run(buf, ret, table_seq, portid, NULL, NULL);
+		if (ret <= 0)
+			break;
+		ret = mnl_socket_recvfrom(nl, buf, sizeof(buf));
+	}
+	if (ret == -1) {
+		perror("error");
+		return -1;
+	}
+	mnl_socket_close(nl);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_sendto
+static long syz_sendto(volatile long nl_ptr, volatile long batch_ptr)
+{
+	struct mnl_socket* nl = (struct mnl_socket*)(long)nl_ptr;
+	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
+	mnl_socket_sendto(nl, mnl_nlmsg_batch_head(batch), mnl_nlmsg_batch_size(batch));
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_batch_begin
+static long syz_batch_begin(volatile long batch_ptr, volatile long seq)
+{
+	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
+	nftnl_batch_begin((char*)mnl_nlmsg_batch_current(batch), seq++);
+	mnl_nlmsg_batch_next(batch);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_batch_end
+static long syz_batch_end(volatile long batch_ptr, volatile long seq)
+{
+	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
+	nftnl_batch_end((char*)mnl_nlmsg_batch_current(batch), seq++);
+	mnl_nlmsg_batch_next(batch);
+	return 0;
 }
 #endif
