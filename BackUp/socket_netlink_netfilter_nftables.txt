@@ -68,11 +68,14 @@ type nft_set_elem_list_name string[name]
 
 msg_flags = 0x400, 0x404, 0x604, 0x4
 type net_flags int16[msg_flags]
-type seqs int32[0:40]
+type seqs int32[7388453:7388461]
 expr_policy = "lookup", "bitwise", "byteorder", "cmp", "dynset", "immediate"
 type policy string[expr_policy]
 set_flags = 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80
 type nft_set_flag int32[set_flags]
+
+id = 0x100, 0x101
+type setID int32[id]
 
 syz_mnl_socket_open() mnl_sock
 syz_mnl_socket_close(sock mnl_sock)
@@ -161,12 +164,13 @@ syz_declare_int_array(size int32) int_array
 
 syz_create_table(b mnl_nlmsg_batch, table_name ptr[in, nft_table_name], family fam, seq seqs)
 syz_create_chain(b mnl_nlmsg_batch, table_name_ptr ptr[in, nft_table_name], chain_name_ptr ptr[in, nft_chain_name], family fam, seq seqs)
-syz_create_set(b mnl_nlmsg_batch, table_name_ptr ptr[in, nft_table_name], set_name_ptr ptr[in, nft_set_name], set_flags nft_set_flag, family fam, seq seqs)
-syz_create_rule_expr_lookup(b mnl_nlmsg_batch, table_name_ptr ptr[in, nft_table_name], chain_name_ptr ptr[in, nft_chain_name], set_name_ptr ptr[in, nft_set_name], reg nft_regs, family fam, seq seqs)
+syz_create_set(b mnl_nlmsg_batch, table_name_ptr ptr[in, nft_table_name], set_name_ptr ptr[in, nft_set_name], set_flags nft_set_flag, set_id setID, family fam, seq seqs)
+syz_create_rule_expr_lookup(b mnl_nlmsg_batch, table_name_ptr ptr[in, nft_table_name], chain_name_ptr ptr[in, nft_chain_name], set_name_ptr ptr[in, nft_set_name], reg nft_regs, set_id setID, family fam, seq seqs)
 syz_recvfrom_cb(nl_ptr mnl_sock, buf_ptr char_array, portid ret_portid, table_seq seqs)
 syz_sendto(nl_ptr mnl_sock, batch_ptr mnl_nlmsg_batch)
 syz_batch_begin(b mnl_nlmsg_batch, seq seqs)
 syz_batch_end(b mnl_nlmsg_batch, seq seqs)
+syz_create_faulty_lookup_rule(b mnl_nlmsg_batch, table_name_ptr ptr[in, nft_table_name], chain_name_ptr ptr[in, nft_chain_name], set_name_ptr ptr[in, nft_set_name], set_id setID, family fam, seq seqs)
 
 type nftnl_table_attr int32[0:7]
 type nftnl_chain_attr int32[0:16]

@@ -6934,7 +6934,7 @@ static long syz_create_chain(volatile long batch_ptr, volatile long table_name_p
 
 #if SYZ_EXECUTOR || __NR_syz_create_set
 static long syz_create_set(volatile long batch_ptr, volatile long table_name_ptr, volatile long set_name_ptr,
-			   volatile long set_flags, volatile long family, volatile long seq)
+			   volatile long set_flags, volatile long set_id, volatile long family, volatile long seq)
 {
 	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
 	char* table_name = (char*)(long)table_name_ptr;
@@ -6946,7 +6946,8 @@ static long syz_create_set(volatile long batch_ptr, volatile long table_name_ptr
 	nftnl_set_set_str(set, NFTNL_SET_TABLE, table_name);
 	nftnl_set_set_str(set, NFTNL_SET_NAME, set_name);
 	nftnl_set_set_u32(set, NFTNL_SET_FLAGS, set_flags);
-
+	nftnl_set_set_u32(set, NFTNL_SET_KEY_LEN, 1);
+	nftnl_set_set_u32(set, NFTNL_SET_ID, set_id);
 	struct nlmsghdr* nlh = nftnl_set_nlmsg_build_hdr((char*)mnl_nlmsg_batch_current(batch), NFT_MSG_NEWSET, family, NLM_F_CREATE | NLM_F_ACK, seq);
 	nftnl_set_nlmsg_build_payload(nlh, set);
 	mnl_nlmsg_batch_next(batch);
@@ -6959,7 +6960,7 @@ static long syz_create_set(volatile long batch_ptr, volatile long table_name_ptr
 
 #if SYZ_EXECUTOR || __NR_syz_create_rule_expr_lookup
 static long syz_create_rule_expr_lookup(volatile long batch_ptr, volatile long table_name_ptr, volatile long chain_name_ptr,
-					volatile long set_name_ptr, volatile long reg, volatile long family, volatile long seq)
+					volatile long set_name_ptr, volatile long reg, volatile long set_id, volatile long family, volatile long seq)
 {
 	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
 	char* table_name = (char*)(long)table_name_ptr;
@@ -6975,6 +6976,7 @@ static long syz_create_rule_expr_lookup(volatile long batch_ptr, volatile long t
 
 	nftnl_expr_set_u32(lookup, NFTNL_EXPR_LOOKUP_SREG, reg);
 	nftnl_expr_set_str(lookup, NFTNL_EXPR_LOOKUP_SET, set_name);
+	nftnl_expr_set_u32(lookup, NFTNL_EXPR_LOOKUP_SET_ID, set_id);
 	nftnl_expr_set_u32(lookup, NFTNL_EXPR_LOOKUP_FLAGS, 0);
 
 	nftnl_rule_add_expr(rule, lookup);
@@ -7036,6 +7038,66 @@ static long syz_batch_end(volatile long batch_ptr, volatile long seq)
 	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
 	nftnl_batch_end((char*)mnl_nlmsg_batch_current(batch), seq++);
 	mnl_nlmsg_batch_next(batch);
+	return 0;
+}
+#endif
+
+#if SYZ_EXECUTOR || __NR_syz_create_faulty_lookup_rule
+static long syz_create_faulty_lookup_rule(volatile long batch_ptr, volatile long table_name_ptr, volatile long chain_name_ptr,
+					  volatile long set_name_ptr, volatile long set_id, volatile long family, volatile long seq)
+{
+	struct mnl_nlmsg_batch* batch = (struct mnl_nlmsg_batch*)(long)batch_ptr;
+	char* table_name = (char*)(long)table_name_ptr;
+	char* chain_name = (char*)(long)chain_name_ptr;
+	char* set_name = (char*)(long)set_name_ptr;
+	struct nftnl_expr *lookup1, *lookup2;
+	struct nftnl_rule* rule;
+
+	rule = nftnl_rule_alloc();
+	if (rule == NULL) {
+		errx(1, "Cannot into nftnl_rule_alloc()");
+	}
+
+	nftnl_rule_set_u32(rule, NFTNL_RULE_FAMILY, family);
+	nftnl_rule_set_str(rule, NFTNL_RULE_TABLE, table_name);
+	nftnl_rule_set_str(rule, NFTNL_RULE_CHAIN, chain_name);
+
+	lookup1 = nftnl_expr_alloc("lookup");
+	if (lookup1 == NULL) {
+		errx(1, "Cannot into nftnl_expr_alloc()");
+	}
+
+	// for release
+	nftnl_expr_set_u32(lookup1, NFTNL_EXPR_LOOKUP_SREG, NFT_REG_1);
+	nftnl_expr_set_str(lookup1, NFTNL_EXPR_LOOKUP_SET, set_name);
+	nftnl_expr_set_u32(lookup1, NFTNL_EXPR_LOOKUP_SET_ID, set_id);
+	nftnl_expr_set_u32(lookup1, NFTNL_EXPR_LOOKUP_FLAGS, 0);
+
+	nftnl_rule_add_expr(rule, lookup1);
+
+	lookup2 = nftnl_expr_alloc("lookup");
+	if (lookup2 == NULL) {
+		errx(1, "Cannot into nftnl_expr_alloc()");
+	}
+
+	// for fault
+	nftnl_expr_set_u32(lookup2, NFTNL_EXPR_LOOKUP_SREG, 0);
+	nftnl_expr_set_str(lookup2, NFTNL_EXPR_LOOKUP_SET, set_name);
+	nftnl_expr_set_u32(lookup1, NFTNL_EXPR_LOOKUP_SET_ID, set_id);
+	nftnl_expr_set_u32(lookup2, NFTNL_EXPR_LOOKUP_FLAGS, 0);
+
+	nftnl_rule_add_expr(rule, lookup2);
+
+	struct nlmsghdr* nlh = nftnl_rule_nlmsg_build_hdr(
+	    (char*)mnl_nlmsg_batch_current(batch),
+	    NFT_MSG_NEWRULE,
+	    family,
+	    NLM_F_APPEND | NLM_F_CREATE | NLM_F_ACK,
+	    seq);
+	nftnl_rule_nlmsg_build_payload(nlh, rule);
+	mnl_nlmsg_batch_next(batch);
+
+	nftnl_rule_free(rule);
 	return 0;
 }
 #endif
